@@ -1,0 +1,172 @@
+<html>
+<head>
+<title>Project 1</title>
+<link href="https://fonts.googleapis.com/css?family=Barlow+Condensed" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Signika" rel="stylesheet">
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<link href="John.css"/>
+<style>
+p {
+  text-align: center;
+  color:#84bd00;
+}
+#Project1{
+    font-family: 'Signika', sans-serif;
+    font-weight: 700;
+    font-style: normal;
+    font-size: 48px;
+
+}
+body{
+   background: #ecebe8;
+}
+#rectBox{
+
+}
+
+</style>
+</head>
+<body class="content">
+<p id="Project1">
+    Top Spotify Tracks: Populatriy and Uniqueness
+    <br>
+<svg id="Graph" height="10" width="10"></svg>
+    <br>
+    <br>
+<svg id="BarcodeGraphs" height="10" width="10"></svg>
+</p>
+
+<script>
+
+var width= 800;
+var height= 600;
+
+var wbars=800;
+var hbars=800;
+
+
+//sizes top graph to h x w
+var graph = d3.select("#Graph")
+    .attr("height", height)
+    .attr("width", width);
+
+var barcodeGraphs = d3.select("#BarcodeGraphs")
+    .attr("height", hbars)
+    .attr("width", wbars);
+
+//loads dat data
+d3.json("Data.json", callback);
+
+function callback (error, data) {
+  songData = data;
+
+//gets ranges of songdata ellements 
+var rankExtent = d3.extent(songData, function (d){return d.rank;});
+var countExtent = d3.extent(songData, function (d){return d.energy;});
+var razExtent = d3.extent(songData, function (d){return d.loudness;});
+//set scales
+var rank = d3.scaleLinear()
+    .domain(rankExtent)
+    .range([20, width-20]);
+var count = d3.scaleLinear()
+    .domain(countExtent)
+    .range([height-20, 20]);
+var radSize = d3.scaleLinear()
+    .domain(razExtent)
+    .range([5,20]);
+
+//set axis
+var xAxis2 = d3.axisBottom()
+    .scale(rank)
+    .ticks(3);
+var yAxis2 = d3.axisLeft()
+    .scale(count)
+    .ticks(5);
+//add axis as lines via append
+var graph = d3.select("#graph");
+graph 
+    .append("line")
+    .attr("x1", width/2)
+    .attr("y1", 0)
+    .attr("x2", width/2)
+    .attr("y2", height) 
+    .attr("stroke", "black")
+    .attr("stroke-width", 3);
+graph
+    .append("line")
+    .attr("x1", 0)
+    .attr("y1", height/2)
+    .attr("x2", width)
+    .attr("y2", height/2) 
+    .attr("stroke", "black")
+    .attr("stroke-width", 3);
+
+//loop to add song 
+songData.forEach(function(d){
+  graph.append("circle")
+    .attr("cx", rank(d.rank))
+    .attr("cy", count(d.energy))
+    .attr("r", radSize(d.loudness))
+    .style("opacity", .35);
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/////////////////Start of Bargraphs/////////////////////
+BarOffset=50;
+BarStart=80;
+BarHeight=40;
+
+bHeightStart=BarStart;
+bHeightEnd=BarStart-BarHeight;
+
+bWidthStart= 0+BarOffset;
+bWidthEnd= wbars- (2*BarOffset);
+
+var aExtent = d3.extent(songData, function (d){return d.speechiness;});
+
+var aScale = d3.scaleLinear()
+    .domain(aExtent)
+    .range([bWidthStart, bWidthEnd]);
+
+barcodeGraphs.append("rect")
+    .attr("x", bWidthStart)
+    .attr("y", BarStart-BarHeight)
+    .attr("width", bWidthEnd)
+    .attr("height", (BarHeight))
+    .attr("class", "rectBox")
+    .attr("Stroke","black")
+    .attr("stroke-width", "1")
+    .style("opacity", 1)
+    .style("fill", "transparent");
+
+
+songData.forEach(function(d){
+  barcodeGraphs.append("line")
+    .attr("x1", bWidthStart+(aScale(d.speechiness)))
+    .attr("y1", bHeightStart)
+    .attr("x2", bWidthStart+(aScale(d.speechiness)))
+    .attr("y2", bHeightEnd)
+    .attr("stroke", "black")
+    .attr("stroke-width", "1")
+    .style("opacity", .45);
+});
+
+
+};
+</script>
+
+</html>
