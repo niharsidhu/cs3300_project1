@@ -1,0 +1,89 @@
+<html>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<h5> Vertical Bar Graph for PCA Coefficients </h5>
+
+<body>
+<svg id="VerticalGraph" height="10" width="10"></svg>
+
+<script>
+var data = [["Danceability",-1.15835584], ["Energy",-1.07735592], ["Loudness",-0.37613798], ["Speechiness",0.25677694], ["Acousticness",-0.82659449], ["Liveness", 0.34142479], ["Valence", 0.42047326], ["Tempo", -0.73442409], ["Duration", -0.61886763]];
+
+var marginLeft = 30
+var marginRight = 30
+var marginTop = 100
+var marginBottom = 500
+var width = 900					//width of the actual graph
+var height = 300 				//height of the actual graph
+
+var svg = d3.select("#VerticalGraph")
+			.attr("width", width + marginLeft + marginRight)
+			.attr("height", height + marginTop + marginBottom)
+
+var xAxis = d3.scaleBand()		//scaleBand returns a band, with properties used to make bar graphs
+			.range([0, width])
+			.padding(0.95);
+
+
+var yAxis = d3.scaleLinear()
+			.range([height, 0])
+			.nice();
+
+var minY;
+var maxY;
+
+d3.csv("data.csv", function(data){
+
+	xAxis.domain(data.map(function(d) {return d.Feature; }));
+
+	minY = d3.min(data, function(d){return d.Value; });
+	maxY = d3.max(data, function(d){return d.Value; });
+
+
+	yAxis.domain([minY, maxY])
+	     .range([height, 0])
+	     .nice();
+
+svg.selectAll(".bar")
+	.data(data)
+	.enter().append("rect")
+	.attr("x", function(d) {return xAxis(d.Feature); })									//starts the rectangle at the band
+	.attr("width", xAxis.bandwidth())													//width of bar is given by bandwidth
+	.attr("y", function(d) {return d.Value < 0 ? yAxis(0) : yAxis(d.Value); })			//starts rectangle at this y position
+	.attr("height", function(d) {return Math.abs(yAxis(d.Value) - yAxis(0)); });
+
+
+svg.selectAll(".circle")
+	.data(data)
+	.enter().append("circle")
+	.attr("cx", function(d) {return xAxis(d.Feature); })
+	.attr("cy", function(d) {return yAxis(d.Value); })
+	.attr("r", 10)
+	.style("fill", "green");
+
+
+svg.selectAll(".text")
+	.data(data)
+	.enter().append("text")
+	.attr("x", function(d) {return xAxis(d.Feature); })
+	.attr("y", function(d) {return yAxis(d.Value); })
+	.text(function(d) {return d.Feature});
+
+
+
+svg.append("g")
+      .attr("transform", "translate(0," + marginBottom + ")")
+      .call(d3.axisBottom(xAxis));
+  
+  /*
+  svg.append("g")
+  	.attr("transform", "translate(" + marginLeft + ",0)")
+	.call(d3.axisLeft(yAxis));
+	*/
+
+});
+
+console.log("Hello");
+
+</script>
+</body>
+</html>
