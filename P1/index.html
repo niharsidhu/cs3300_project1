@@ -28,7 +28,7 @@ body{
 </head>
 <body class="content">
 <p id="Project1">
-    Top Spotify Tracks: Populatriy and Uniqueness
+    Top Spotify Tracks: Popularity and Uniqueness
     <br>
     <br>
 <svg id="Key" height="10" width="10"></svg>
@@ -36,6 +36,9 @@ body{
     <br>
     <br>
 <svg id="BarcodeGraphs" height="10" width="10"></svg>
+    <br>
+    <br>
+<svg id="SpotifyTracks" height="10" width="10"></svg>
 </p>
 
 <script>
@@ -355,8 +358,71 @@ songData.forEach(function(d){
     .attr("stroke-width", "1")
     .style("opacity", .45);
 });
-
+    
+    
+    
 };
+
+    //Spotify Track Data
+    var track_height = 500;
+    var track_width = 1200;
+    var num_boxes = 5;
+    var box_gap = 80;
+    var box_dimen = (track_width - (box_gap*(num_boxes-1))) / num_boxes;
+    var song_name_offset = 80;
+    var artist_offset = 24;
+    
+    
+    var album_art_array = ["albumart.jpg","albumart.jpg","albumart.jpg","albumart.jpg","albumart.jpg"];
+    var spotify_code_array = ["spotifycode.png","spotifycode.png","spotifycode.png","spotifycode.png","spotifycode.png"];
+    var song_name_array = ["Float","Roses","Lose My Mind","Bear","Move"];
+    var artist_array = ["Pacific Air","Pacific Air","Pacific Air","Pacific Air","Pacific Air"];
+    
+    
+    var spotifyTracks = d3.select("#SpotifyTracks")
+    .attr("height", track_height)
+    .attr("width", track_width);
+    
+    spotifyTracks.append("rect")
+    .attr("x", 0)
+    .attr("y", 0)
+    .attr("width", track_width)
+    .attr("height", track_height)
+    .attr("class", "rectBox")
+    .attr("Stroke","black")
+    .attr("stroke-width", "1")
+    .style("opacity", 1)
+    .style("fill", "transparent");
+    
+    for (var i = 0; i < num_boxes; i++) {
+        var xPos = i * (box_dimen + box_gap);
+        
+        spotifyTracks.append("svg:image")
+            .attr("xlink:href", album_art_array[i])
+            .attr("x", xPos)
+            .attr("y", 0)
+            .attr("width", box_dimen)
+            .attr("height", box_dimen);
+        spotifyTracks.append("svg:image")
+            .attr("xlink:href", spotify_code_array[i])
+            .attr("x", xPos)
+            .attr("y", box_dimen)
+            .attr("width", box_dimen);
+        spotifyTracks.append("text")
+            .attr("x", xPos + 0.5*box_dimen)
+            .attr("y", box_dimen + song_name_offset)
+            .attr("text-anchor", "middle")
+            .style("font-size", 30)
+            .text(song_name_array[i]);
+        spotifyTracks.append("text")
+            .attr("x", xPos + 0.5*box_dimen)
+            .attr("y", box_dimen + song_name_offset + artist_offset)
+            .attr("text-anchor", "middle")
+            .style("font-size", 20)
+            .style("opacity", .65)
+            .text(artist_array[i]);
+    }
+    
 </script>
 
 </html>
