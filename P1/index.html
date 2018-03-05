@@ -2,14 +2,14 @@
     <head>
         <title>Project 1</title>
         <link href="https://fonts.googleapis.com/css?family=Barlow+Condensed" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Roboto+Slab" rel="stylesheet">
         <script src="https://d3js.org/d3.v4.min.js"></script>
         <script src="d3-annotation.js"></script>
         <link href="John.css"/>
         <style>
             h1 {
-                font-family: 'Montserrat', sans-serif;
+                font-family: 'Roboto Slab', sans-serif;
                 text-align: center;
                 color:#FFFFFF;
                 font-weight: 700;
@@ -322,10 +322,10 @@
                         .attr("y", y)
                         .style("font-size", 20)
                         .text(text)
-                        .attr("font-family", "Montserrat")
+                        .attr("font-family", "Roboto Slab")
                         .attr("text-anchor", anchor)
                         .style("fill", "white")
-                        .style("opacity", .6);
+                        .style("opacity", .7);
                 }
                 
                 graphQuadLabels(10,30,"Overplayed party hits", "start");
@@ -342,13 +342,13 @@
                         .attr("font-family", "Roboto")
                         .attr("text-anchor", anchor)
                         .style("fill", "white")
-                        .style("opacity", .4);
+                        .style("opacity", .5);
                 }
                 
                 graphAxisLabels(10, height/2 + 20, "more popular", "start");
                 graphAxisLabels(width - 10, height/2 + 20, "less popular", "end");
-                graphAxisLabels(width/2, 20, "more dynamic", "middle");
-                graphAxisLabels(width/2, height - 20, "less dynamic", "middle");
+                graphAxisLabels(width/2, 15, "more dynamic", "middle");
+                graphAxisLabels(width/2, height - 10, "less dynamic", "middle");
                 
                 function graphSongLabels(x, y, id, anchor) {
                     d = songData[id];
@@ -359,7 +359,7 @@
                         .attr("y", y)
                         .style("font-size", 20)
                         .text(song)
-                        .attr("font-family", "Montserrat")
+                        .attr("font-family", "Roboto Slab")
                         .attr("text-anchor", anchor)
                         .style("fill", "#1dd069")
                         .style("opacity", .8);
@@ -694,7 +694,7 @@
                         .attr("y", top_offset)
                         .attr("text-anchor", "middle")
                         .attr("alignment-baseline", "middle")
-                        .attr("font-family", "Roboto")
+                        .attr("font-family", "Roboto Slab")
                         .attr("font-size", 26)
                         .attr("fill", '#1dd069')
                         .attr("opacity", '0.8')
@@ -703,6 +703,7 @@
                         .attr("x", xPos + box_gap + 0.5*box_dimen)
                         .attr("y", box_dimen + top_offset + song_name_offset)
                         .attr("text-anchor", "middle")
+                        .attr("font-family", "Roboto Slab")
                         .style("font-size", 25)
                         .style("fill", "white")
                         .text(songData[song_number[i]].name);
@@ -737,7 +738,7 @@
                             .attr("y", box_dimen + top_offset + song_name_offset + artist_offset + attribute_offset + 0.23*box_dimen + j*(attribute_spacing + 0.5*box_dimen))
                             .attr("text-anchor", "middle")
                             .attr("alignment-baseline", "middle")
-                            .attr("font-family", "Montserrat")
+                            .attr("font-family", "Roboto Slab")
                             .attr("fill", 'white')
                             .attr("opacity", '0.5')
                             .attr("font-size", 40)
