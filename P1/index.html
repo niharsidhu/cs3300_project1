@@ -98,7 +98,7 @@
             <span style="background: black">
                 These five factors are, in order from most to least important:
                 <br>
-                <span style="color: #1dd069">Loudness</span>,
+                <span style="color: #1dd069">loudness</span>,
                 <span style="color: #1dd069">energy</span>,
                 <span style="color: #1dd069">valence</span>,
                 <span style="color: #1dd069">speechiness</span>, and
@@ -295,15 +295,9 @@
 
                 var song_number = [46, 77, 91, 14, 94];
                 songData.forEach(function(d){
-                    graph.append("svg:image")
-                        .attr("x", rank(d.rank))
-                        .attr("y", height - count(d.pca))
-                        .attr("width", 2*radSize(d.loudness))
-                        .attr("height", 2*radSize(d.loudness))
-                        .attr("xlink:href", checkColor(d.name))
-                        .style("opacity", .4)
-                        .on("click", function () {console.log(d.rank)});
+                    var imageOpacity = 0.3;
                     if (song_number.indexOf(d.rank) >= 0) {
+                        imageOpacity = 0.6;
                         graph.append("circle")
                             .attr("cx", rank(d.rank) + radSize(d.loudness))
                             .attr("cy", height - count(d.pca) + radSize(d.loudness))
@@ -313,6 +307,14 @@
                             .attr("stroke-width", "3")
                             .style("opacity", .5);
                     }
+                    graph.append("svg:image")
+                        .attr("x", rank(d.rank))
+                        .attr("y", height - count(d.pca))
+                        .attr("width", 2*radSize(d.loudness))
+                        .attr("height", 2*radSize(d.loudness))
+                        .attr("xlink:href", checkColor(d.name))
+                        .style("opacity", imageOpacity)
+                        .on("click", function () {console.log(d.rank)});
                 });
 
                 //Labels
@@ -345,8 +347,8 @@
                         .style("opacity", .5);
                 }
                 
-                graphAxisLabels(10, height/2 + 20, "more popular", "start");
-                graphAxisLabels(width - 10, height/2 + 20, "less popular", "end");
+                graphAxisLabels(10, height/2 + 20, "ranked #1", "start");
+                graphAxisLabels(width - 10, height/2 + 20, "ranked #100", "end");
                 graphAxisLabels(width/2, 15, "more dynamic", "middle");
                 graphAxisLabels(width/2, height - 10, "less dynamic", "middle");
                 
@@ -632,6 +634,56 @@
                         .attr("stroke-width", "1")
                         .style("opacity", .45);
                 });
+                
+                function buildBarGraph(attribute) {
+                    var cExtent = d3.extent(songData, function (d){return d['attribute'];});
+                    var cScale = d3.scaleLinear()
+                        .domain(cExtent)
+                        .range([bWidthStart, bWidthEnd]);
+
+                    barcodeGraphs.append("rect")
+                        .attr("x", bWidthStart)
+                        .attr("y", BarStart2-BarHeight)
+                        .attr("width", bWidthEnd)
+                        .attr("height", (BarHeight))
+                        .attr("class", "rectBox")
+                        .attr("Stroke","white")
+                        .attr("stroke-width", "1")
+                        .style("opacity", 1)
+                        .style("fill", "transparent");
+                    barcodeGraphs.append("text")
+                        .attr("x", bWidthStart)
+                        .attr("y", BarStart2-BarHeight-5)
+                        .style("font-size", 16)
+                        .text("Loudness")
+                        .style("fill", "white")
+                        .style("opacity", .65);
+                    barcodeGraphs.append("text")
+                        .attr("x", bWidthStart)
+                        .attr("y", BarStart2+10)
+                        .style("font-size", 12)
+                        .text(cExtent[0].toFixed(3))
+                        .style("fill", "white")
+                        .style("opacity", .65);
+                    barcodeGraphs.append("text")
+                        .attr("x", wbars-BarOffset)
+                        .attr("y", BarStart2+10)
+                        .style("font-size", 12)
+                        .text(cExtent[1].toFixed(3))
+                        .style("fill", "white")
+                        .style("opacity", .65);
+                    songData.forEach(function(d){
+                        barcodeGraphs.append("line")
+                            .attr("x1", bWidthStart+(cScale(d.loudness)))
+                            .attr("y1", bHeightStart2)
+                            .attr("x2", bWidthStart+(cScale(d.loudness)))
+                            .attr("y2", bHeightEnd2)
+                            .attr("stroke", "white")
+                            .attr("stroke-width", "1")
+                            .style("opacity", .45);
+                });
+
+                }
 
 
                 //Spotify Track Data
@@ -688,7 +740,7 @@
                         .attr("fill", '#0e0e0e')
                         .attr("stroke", "#1dd069")
                         .attr('stroke-width', 3)
-                        .attr("opacity", '0.8');
+                        .attr("opacity", '1');
                     spotifyTracks.append("text")
                         .attr("x", xPos + box_gap + box_dimen)
                         .attr("y", top_offset)
@@ -697,7 +749,7 @@
                         .attr("font-family", "Roboto Slab")
                         .attr("font-size", 26)
                         .attr("fill", '#1dd069')
-                        .attr("opacity", '0.8')
+                        .attr("opacity", '0.9')
                         .text("#" + songData[song_number[i]].rank)
                     spotifyTracks.append("text")
                         .attr("x", xPos + box_gap + 0.5*box_dimen)
