@@ -493,9 +493,7 @@
 
                 //Barcode Graph Tree
                 var aExtent = d3.extent(songData, function (d){return d.speechiness;});
-                var aScale = d3.scaleLinear()
-                .domain([0,1])
-                .range([bWidthStart, bWidthEnd]);
+                var aScale = d3.scaleLinear().domain([0,1]).range([bWidthStart, bWidthEnd]);
                 barcodeGraphs.append("rect")
                     .attr("x", bWidthStart)
                     .attr("y", BarStart-BarHeight)
@@ -635,11 +633,18 @@
                         .style("opacity", .45);
                 });
                 
-                function buildBarGraph(attribute) {
-                    var cExtent = d3.extent(songData, function (d){return d['attribute'];});
-                    var cScale = d3.scaleLinear()
-                        .domain(cExtent)
-                        .range([bWidthStart, bWidthEnd]);
+                function buildBarGraph(bHeightStart, attribute) {
+                    BarOffset=50;
+                    BarStart=80;
+                    BarHeight=40;
+
+                    bHeightEnd = BarStart - BarHeight;
+
+                    bWidthStart= 0+BarOffset;
+                    bWidthEnd= wbars- (2*BarOffset);
+                    
+                    var cExtent = d3.extent(songData, function (d){return d[attribute];});
+                    var cScale = d3.scaleLinear().domain(cExtent).range([bWidthStart, bWidthEnd]);
 
                     barcodeGraphs.append("rect")
                         .attr("x", bWidthStart)
@@ -674,14 +679,14 @@
                         .style("opacity", .65);
                     songData.forEach(function(d){
                         barcodeGraphs.append("line")
-                            .attr("x1", bWidthStart+(cScale(d.loudness)))
+                            .attr("x1", bWidthStart+(cScale(d[attribute])))
                             .attr("y1", bHeightStart2)
-                            .attr("x2", bWidthStart+(cScale(d.loudness)))
+                            .attr("x2", bWidthStart+(cScale(d[attribute])))
                             .attr("y2", bHeightEnd2)
                             .attr("stroke", "white")
                             .attr("stroke-width", "1")
                             .style("opacity", .45);
-                });
+                    });
 
                 }
 
