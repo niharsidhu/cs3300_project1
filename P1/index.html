@@ -1,582 +1,760 @@
 <html>
-<head>
-<title>Project 1</title>
-<link href="https://fonts.googleapis.com/css?family=Barlow+Condensed" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css?family=Signika" rel="stylesheet">
-<script src="https://d3js.org/d3.v4.min.js"></script>
-<script src="d3-annotation.js"></script>
-<link href="John.css"/>
-<style>
-p {
-  text-align: center;
-  color:#FFFFFF;
-}
-#Project1{
-    font-family: 'Signika', sans-serif;
-    font-weight: 700;
-    font-style: normal;
-    font-size: 48px;
-
-}
-body{
-   background: #181818;
-}
-#rectBox{
-
-}
-
-#text{
-	opacity: .65;
-	color: #FFFFFF;
-
-}
-
-
-.axisWhite line{
-  stroke: white;
-}
-
-.axisWhite path{
-  stroke: white;
-}
-
-.axisWhite text{
-  fill: white;
-}  
-
-
-</style>
-</head>
-<body class="content">
-<p id="Project1">
-    Top Spotify Tracks: Populatriy and Uniqueness
-    <br>
-    <br>
-<svg id="Key" height="10" width="10"></svg>
-	<br>
-<svg id="Graph" height="10" width="10"></svg>
-    <br>
-<svg id="VerticalGraph" height="10" width="10"></svg>
-    <br>
-<svg id="BarcodeGraphs" height="10" width="10"></svg>
-    <br>
-    <br>
-<svg id="SpotifyTracks" height="10" width="10"></svg>
-</p>
-
-<script>
-var keywidth= 800;
-var keyheight= 80;
-
-var width= 800;
-var height= 600;
-
-var wbars=800;
-var hbars=300;
-
-var keystart=260;
-
-
-/////////////////////////Main Top Graph/////////////////////////
-
-//sizes top graph to h x w
-var graph = d3.select("#Graph")
-    .attr("height", height)
-    .attr("width", width);
-
-var barcodeGraphs = d3.select("#BarcodeGraphs")
-    .attr("height", hbars)
-    .attr("width", wbars);
-
-var KeyGraphs = d3.select("#Key")
-    .attr("height", keyheight)
-    .attr("width", keywidth);
-
-//key
-KeyGraphs.append("text")
-    .attr("x", keystart)
-    .attr("y", 45)
-    .style("font-size", 20)
-    .text("KEY:")
-    .style("fill", "white")
-    .style("opacity", .65);
-KeyGraphs.append("circle")
-    .attr("cx", keystart+70)
-    .attr("cy", 40)
-    .attr("r", 5)
-    .style("opacity", .35)
-    .style("fill", "white");
-KeyGraphs.append("text")
-    .attr("x", keystart+80)
-    .attr("y", 42.5)
-    .style("font-size", 12)
-    .text("small")
-    .style("fill", "white")
-    .style("opacity", .65);
-KeyGraphs.append("circle")
-    .attr("cx", keystart+140)
-    .attr("cy", 40)
-    .attr("r", 14)
-    .style("opacity", .35)
-    .style("fill", "white");
-KeyGraphs.append("text")
-    .attr("x", keystart+160)
-    .attr("y", 42.5)
-    .style("font-size", 14)
-    .text("med")
-    .style("fill", "white")
-    .style("opacity", .65);
-KeyGraphs.append("circle")
-    .attr("cx", keystart+215)
-    .attr("cy", 40)
-    .attr("r", 20)
-    .style("opacity", .35)
-    .style("fill", "white");
-KeyGraphs.append("text")
-    .attr("x", keystart+240)
-    .attr("y", 42.5)
-    .style("font-size", 16)
-    .text("large")
-    .style("fill", "white")
-    .style("opacity", .65);
-
-//loads dat data
-d3.json("Data.json", callback);
-
-function callback (error, data) {
-  songData = data;
-
-//gets ranges of songdata ellements 
-var rankExtent = d3.extent(songData, function (d){return d.rank;});
-var countExtent = d3.extent(songData, function (d){return d.energy;});
-var razExtent = d3.extent(songData, function (d){return d.loudness;});
-//set scales
-var rank = d3.scaleLinear()
-    .domain(rankExtent)
-    .range([20, width-20]);
-var count = d3.scaleLinear()
-    .domain(countExtent)
-    .range([height-20, 20]);
-var radSize = d3.scaleSqrt()
-    .domain(razExtent)
-    .range([5,20]);
-
-
-//set axis
-var xAxis2 = d3.axisBottom()
-    .scale(rank)
-    .ticks(3);
-var yAxis2 = d3.axisLeft()
-    .scale(count)
-    .ticks(5);
-//add axis as lines via append
-var graph = d3.select("#graph");
-graph 
-    .append("line")
-    .attr("x1", width/2)
-    .attr("y1", 0)
-    .attr("x2", width/2)
-    .attr("y2", height) 
-    .attr("stroke", "white")
-    .style("opacity", .65)
-    .attr("stroke-width", 1.5);
-
-graph
-    .append("line")
-    .attr("x1", 0)
-    .attr("y1", height/2)
-    .attr("x2", width)
-    .attr("y2", height/2) 
-    .attr("stroke", "white")
-    .style("opacity", .65)
-    .attr("stroke-width", 1.5);
-
-
-//loop to add song 
-/*
-songData.forEach(function(d){
-  graph.append("circle")
-    .attr("cx", rank(d.rank))
-    .attr("cy", count(d.energy))
-    .attr("r", radSize(d.loudness))
-    .style("opacity", .35)
-    .style("fill", "white");
-});
-*/
-
-function checkColor (data) {
-  if (data == "Shape of You"){
-   return ("MusicNoteGreen.png")
-} 
-   else { 
-   	return ("MusicNote.png")
-   };
-};
-
-songData.forEach(function(d){
-    graph.append("svg:image")
-    .attr("x", rank(d.rank))
-    .attr("y", count(d.energy))
-    .attr("width", 2*radSize(d.loudness))
-    .attr("height", 2*radSize(d.loudness))
-    .attr("xlink:href", checkColor(d.name))
-    .style("opacity", .35)
-    .on("click", function () {console.log(d.rank)});
-});
-
-//Labels
-graph.append("text")
-    .attr("x", 0)
-    .attr("y", 12)
-    .style("font-size", 16)
-    .text("Quad A")
-    .style("fill", "white")
-    .style("opacity", .65);
-graph.append("text")
-    .attr("x", width-75)
-    .attr("y", 12)
-    .style("font-size", 16) 
-    .text("Quad B")
-    .style("fill", "white")
-    .style("opacity", .65);
-graph.append("text")
-    .attr("x", 0)
-    .attr("y", height-10)
-    .style("font-size", 16)
-    .text("Quad C")
-    .style("fill", "white")
-    .style("opacity", .65);
-graph.append("text")
-    .attr("x", width-75)
-    .attr("y", height-10)
-    .style("font-size", 16)
-    .text("Quad D")
-    .style("fill", "white")
-    .style("opacity", .65);
-
-
-////////////////Start of Scores////////////////////
-var marginLeft = 30;
-var marginRight = 30;
-var marginTop = 30;
-var marginBottom = 30;
-
-var widthScores = 800;				//width of the actual graph
-var heightScores = 300;			//height of the actual graph
-
-var svgScores = d3.select("#VerticalGraph")
-			.attr("width", widthScores + marginLeft + marginRight)
-			.attr("height", heightScores+marginBottom)
-var xAxisScore = d3.scaleBand()		//scaleBand returns a band, with properties used to make bar graphs
-			.range([0, widthScores])
-			.padding(0.95);
-var yAxisScore = d3.scaleLinear()
-			.range([heightScores, 0])
-			.nice();
-var minY;
-var maxY;
-
-function checkDirection (p1) {
-  if (p1>0){
-   return ("translate(0,20)")
-} 
-   else { 
-   	return ("translate(0,-20)")
-   };
-};
-
-
-d3.csv("data_Scores.csv", function(data){
-	xAxisScore.domain(data.map(function(d) {return d.Feature; }));
-	minY = d3.min(data, function(d){return d.Value; });
-	maxY = d3.max(data, function(d){return d.Value; });
-	yAxisScore.domain([minY, maxY])
-	     .range([heightScores, 0])
-	     .nice();
-
-svgScores.selectAll(".bar")
-	.data(data)
-	.enter().append("line")
-	.attr("x1", function(d) {return xAxisScore(d.Feature); })
-	.attr("y1", function(d) {return (heightScores/2);})			
-	.attr("x2", function(d) {return xAxisScore(d.Feature); })												
-	.attr("y2", function(d) {return (yAxisScore(d.Value))/2; })
-	.attr("stroke", "white")
-    .style("opacity", .65)
-    .attr("stroke-width", 1.5)
-    .attr("stroke-dasharray","5, 5");
-
-  svgScores.append("line")
-	.attr("x1", 0)
-	.attr("y1", heightScores/2)			
-	.attr("x2", widthScores)												
-	.attr("y2", heightScores/2)
-	.attr("stroke", "white")
-    .style("opacity", .65)
-    .attr("stroke-width", 1.5);
-
-
-svgScores.selectAll(".circle")
-	.data(data)
-	.enter().append("circle")
-	.attr("cx", function(d) {return xAxisScore(d.Feature); })
-	.attr("cy", function(d) {return (yAxisScore(d.Value)/2); })
-	.attr("r", 5)
-    .style("fill", "transparent")
-    .attr("stroke", "white")
-    .attr("stroke-width", 1.5)
-    .style("opacity", .65);
-
-svgScores.selectAll(".text")
-	.data(data)
-	.enter().append("text")
-	.attr("x", function(d) {return xAxisScore(d.Feature); })
-	.attr("y", function(d) {return (yAxisScore(d.Value)/2); })
-	.text(function(d) {return d.Feature})
-	.style("font-size", 16)
-    .style("fill", "white")
-    .style("opacity", .65)
-    .attr("text-anchor","middle")
-    .attr("transform",function(d) {return checkDirection(yAxisScore(d.Value));} );
-
-});
-
-
-
-
-/////////////////Start of Bargraphs/////////////////////
-BarOffset=50;
-BarStart=80;
-BarHeight=40;
-BarStart1=180;
-BarStart2=280;
-
-bHeightStart=BarStart;
-bHeightEnd=BarStart-BarHeight;
-
-bHeightStart1=BarStart1;
-bHeightEnd1=BarStart1-BarHeight;
-
-bHeightStart2=BarStart2;
-bHeightEnd2=BarStart2-BarHeight;
-
-bWidthStart= 0+BarOffset;
-bWidthEnd= wbars- (2*BarOffset);
-
-//Barcode Graph Tree
-var aExtent = d3.extent(songData, function (d){return d.speechiness;});
-var aScale = d3.scaleLinear()
-    .domain([0,1])
-    .range([bWidthStart, bWidthEnd]);
-barcodeGraphs.append("rect")
-    .attr("x", bWidthStart)
-    .attr("y", BarStart-BarHeight)
-    .attr("width", bWidthEnd)
-    .attr("height", (BarHeight))
-    .attr("class", "rectBox")
-    .attr("Stroke","white")
-    .attr("stroke-width", "1")
-    .style("opacity", 1)
-    .style("fill", "transparent");
-barcodeGraphs.append("text")
-    .attr("x", bWidthStart)
-    .attr("y", BarStart-BarHeight-5)
-    .style("font-size", 16)
-    .text("Speechiness")
-    .style("fill", "white")
-    .style("opacity", .65);
-barcodeGraphs.append("text")
-    .attr("x", bWidthStart)
-    .attr("y", BarStart+10)
-    .style("font-size", 12)
-    .text(aExtent[0].toFixed(3))
-    .style("fill", "white")
-    .style("opacity", .65);
-barcodeGraphs.append("text")
-    .attr("x", wbars-BarOffset)
-    .attr("y", BarStart+10)
-    .style("font-size", 12)
-    .text(aExtent[1].toFixed(3))
-    .style("fill", "white")
-    .style("opacity", .65);
-songData.forEach(function(d){
-  barcodeGraphs.append("line")
-    .attr("x1", bWidthStart+(aScale(d.speechiness)))
-    .attr("y1", bHeightStart)
-    .attr("x2", bWidthStart+(aScale(d.speechiness)))
-    .attr("y2", bHeightEnd)
-    .attr("stroke", "white")
-    .attr("stroke-width", "1")
-    .style("opacity", .45);
-});
-
-//Barcode Graph Two
-var bExtent = d3.extent(songData, function (d){return d.energy;});
-var bScale = d3.scaleLinear()
-    .domain([0,1])
-    .range([bWidthStart, bWidthEnd]);
-
-barcodeGraphs.append("rect")
-    .attr("x", bWidthStart)
-    .attr("y", BarStart1-BarHeight)
-    .attr("width", bWidthEnd)
-    .attr("height", (BarHeight))
-    .attr("class", "rectBox")
-    .attr("Stroke","white")
-    .attr("stroke-width", "1")
-    .style("opacity", 1)
-    .style("fill", "transparent");
-barcodeGraphs.append("text")
-    .attr("x", bWidthStart)
-    .attr("y", BarStart1-BarHeight-5)
-    .style("font-size", 16)
-    .text("Energy")
-    .style("fill", "white")
-    .style("opacity", .65);
-barcodeGraphs.append("text")
-    .attr("x", bWidthStart)
-    .attr("y", BarStart1+10)
-    .style("font-size", 12)
-    .text(bExtent[0].toFixed(3))
-    .style("fill", "white")
-    .style("opacity", .65);
-barcodeGraphs.append("text")
-    .attr("x", wbars-BarOffset)
-    .attr("y", BarStart1+10)
-    .style("font-size", 12)
-    .text(bExtent[1].toFixed(3))
-    .style("fill", "white")
-    .style("opacity", .65);
-songData.forEach(function(d){
-  barcodeGraphs.append("line")
-    .attr("x1", bWidthStart+(bScale(d.energy)))
-    .attr("y1", bHeightStart1)
-    .attr("x2", bWidthStart+(bScale(d.energy)))
-    .attr("y2", bHeightEnd1)
-    .attr("stroke", "white")
-    .attr("stroke-width", "1")
-    .style("opacity", .45);
-});
-
-
-//Barcode Graph Three
-var cExtent = d3.extent(songData, function (d){return d.loudness;});
-var cScale = d3.scaleLinear()
-    .domain(cExtent)
-    .range([bWidthStart, bWidthEnd]);
-
-barcodeGraphs.append("rect")
-    .attr("x", bWidthStart)
-    .attr("y", BarStart2-BarHeight)
-    .attr("width", bWidthEnd)
-    .attr("height", (BarHeight))
-    .attr("class", "rectBox")
-    .attr("Stroke","white")
-    .attr("stroke-width", "1")
-    .style("opacity", 1)
-    .style("fill", "transparent");
-barcodeGraphs.append("text")
-    .attr("x", bWidthStart)
-    .attr("y", BarStart2-BarHeight-5)
-    .style("font-size", 16)
-    .text("Loudness")
-    .style("fill", "white")
-    .style("opacity", .65);
-barcodeGraphs.append("text")
-    .attr("x", bWidthStart)
-    .attr("y", BarStart2+10)
-    .style("font-size", 12)
-    .text(cExtent[0].toFixed(3))
-    .style("fill", "white")
-    .style("opacity", .65);
-barcodeGraphs.append("text")
-    .attr("x", wbars-BarOffset)
-    .attr("y", BarStart2+10)
-    .style("font-size", 12)
-    .text(cExtent[1].toFixed(3))
-    .style("fill", "white")
-    .style("opacity", .65);
-songData.forEach(function(d){
-  barcodeGraphs.append("line")
-    .attr("x1", bWidthStart+(cScale(d.loudness)))
-    .attr("y1", bHeightStart2)
-    .attr("x2", bWidthStart+(cScale(d.loudness)))
-    .attr("y2", bHeightEnd2)
-    .attr("stroke", "white")
-    .attr("stroke-width", "1")
-    .style("opacity", .45);
-});
-
-};
-
-
-
-
- //Spotify Track Data
-    var track_height = 500;
-    var track_width = 1200;
-    var num_boxes = 5;
-    var box_gap = 80;
-    var box_dimen = (track_width - (box_gap*(num_boxes-1))) / num_boxes;
-    var song_name_offset = 80;
-    var artist_offset = 24;
-    
-    
-    var album_art_array = ["location.jpg","justholdon.jpg","theresnothingholdingmeback.jpg","maskoff.jpg","bankaccount.png"];
-    var spotify_code_array = ["location.jpg","justholdon.jpg","theresnothingholdingmeback.jpg","maskoff.jpg","bankaccount.png"];
-    var song_name_array = ["Location","Just Hold On","There's Nothing Holdin' Me Back","Mask Off","Bank Account"];
-    var artist_array = ["Khalid","Steve Aoki","Shawn Mendes","Future","21 Savage"];
-    
-    
-    var spotifyTracks = d3.select("#SpotifyTracks")
-    .attr("height", track_height)
-    .attr("width", track_width);
-    
-    spotifyTracks.append("rect")
-    .attr("x", 0)
-    .attr("y", 0)
-    .attr("width", track_width)
-    .attr("height", track_height)
-    .attr("class", "rectBox")
-    .attr("Stroke","black")
-    .attr("stroke-width", "1")
-    .style("opacity", 1)
-    .style("fill", "transparent");
-    
-    for (var i = 0; i < num_boxes; i++) {
-        var xPos = i * (box_dimen + box_gap);
-        
-        spotifyTracks.append("svg:image")
-            .attr("xlink:href", 'assets/albumart/' + album_art_array[i])
-            .attr("x", xPos)
-            .attr("y", 0)
-            .attr("width", box_dimen)
-            .attr("height", box_dimen);
-        spotifyTracks.append("svg:image")
-            .attr("xlink:href", spotify_code_array[i])
-            .attr("x", xPos)
-            .attr("y", box_dimen)
-            .attr("width", box_dimen);
-        spotifyTracks.append("text")
-            .attr("x", xPos + 0.5*box_dimen)
-            .attr("y", box_dimen + song_name_offset)
-            .attr("text-anchor", "middle")
-            .style("font-size", 30)
-            .style("fill", "white")
-            .text(song_name_array[i]);
-        spotifyTracks.append("text")
-            .attr("x", xPos + 0.5*box_dimen)
-            .attr("y", box_dimen + song_name_offset + artist_offset)
-            .attr("text-anchor", "middle")
-            .style("fill", "white")
-            .style("font-size", 20)
-            .style("opacity", .65)
-            .text(artist_array[i]);
-    }
-
-
-
-
-</script>
-
+    <head>
+        <title>Project 1</title>
+        <link href="https://fonts.googleapis.com/css?family=Barlow+Condensed" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+        <script src="https://d3js.org/d3.v4.min.js"></script>
+        <script src="d3-annotation.js"></script>
+        <link href="John.css"/>
+        <style>
+            h1 {
+                font-family: 'Montserrat', sans-serif;
+                text-align: center;
+                color:#FFFFFF;
+                font-weight: 700;
+                font-style: normal;
+                font-size: 60px;
+            }
+            p {
+                text-align: center;
+                color:#FFFFFF;
+            }
+            #Project1{
+                font-family: 'Roboto', sans-serif;
+                font-weight: 700;
+                font-style: normal;
+                font-size: 24px;
+
+            }
+            body{
+                background: linear-gradient(#252525, #101010);
+            }
+            #rectBox{
+
+            }
+
+            #text{
+                opacity: .65;
+                color: #FFFFFF;
+
+            }
+
+
+            .axisWhite line{
+                stroke: white;
+            }
+
+            .axisWhite path{
+                stroke: white;
+            }
+
+            .axisWhite text{
+                fill: white;
+            }  
+
+
+        </style>
+    </head>
+
+    <body class="content">
+        <h1><br>
+            <span style="background: black">
+                Analyzing <span style="color: #1dd069">Spotify's</span> Top 100 Songs of 2017
+            </span>
+            
+        </h1>
+        <p id="Project1">
+            <span style="background: black">
+                Spotify's top 100 tracks have been collectively listened to billions of times.
+            </span>
+            <br>
+            <span style="background: black">
+                We picked <span style="color: #1dd069">five outliers</span> to help us <span style="color: #1dd069">determine the factors that make songs unique</span>.
+            </span>
+            <br>
+            <svg id="Key" height="10" width="10"></svg>
+            <br>
+            <svg id="Graph" height="10" width="10"></svg>
+            <br>
+            <br>
+            <span style="background: black">
+                Each one of these five songs is an outlier in a different factor.
+                <br>
+                These factors, combined, determine how <span style="color: #1dd069">"dynamic"</span> a song is.
+            </span>
+            <br>
+            <br>
+            <span style="background: black">
+                We used <span style="color: #1dd069">principal component analysis</span> (PCA) to find these five factors.
+                <br>
+                PCA mathematically tells us that they are <span style="color: #1dd069">the most significant</span> factors in our dataset.
+            </span>
+            <br>
+            <br>
+            <svg id="VerticalGraph" height="10" width="10"></svg>
+            <br>
+            <br>
+            <span style="background: black">
+                These five factors are, in order from most to least important:
+                <br>
+                <span style="color: #1dd069">Loudness</span>,
+                <span style="color: #1dd069">energy</span>,
+                <span style="color: #1dd069">valence</span>,
+                <span style="color: #1dd069">speechiness</span>, and
+                <span style="color: #1dd069">tempo</span>.
+            </span>
+            <br>
+            <br>
+                <span style="background: black">
+                Let's go into more detail for each of these factors.
+            </span>
+            <br>
+            <br>
+            <svg id="BarcodeGraphs" height="10" width="10"></svg>
+            <br>
+            <br>
+            <svg id="LoudnessBarcode" height="10" width="10"></svg>
+            <br>
+            <br>
+            <svg id="EnergyBarcode" height="10" width="10"></svg>
+            <br>
+            <br>
+            <svg id="ValenceBarcode" height="10" width="10"></svg>
+            <br>
+            <br>
+            <svg id="SpeechinessBarcode" height="10" width="10"></svg>
+            <br>
+            <br>
+            <svg id="TempoBarcode" height="10" width="10"></svg>
+            <br>
+            <br>
+            <span style="background: black">
+                Interested in listening to these tracks to hear these factors for yourself?
+                <br>
+               Scan the song codes below the album art for each song to play them on <span style="color: #1dd069">Spotify</span>.
+            </span>
+            <br>
+            <br>
+            <svg id="SpotifyTracks" height="10" width="10"></svg>
+        </p>
+
+        <script>
+            var keywidth= 800;
+            var keyheight= 80;
+
+            var width= 1000;
+            var height= 600;
+
+            var wbars=1000;
+            var hbars=500;
+
+            var keystart=260;
+
+
+            /////////////////////////Main Top Graph/////////////////////////
+
+            //sizes top graph to h x w
+            var graph = d3.select("#Graph")
+            .attr("height", height)
+            .attr("width", width);
+
+            var barcodeGraphs = d3.select("#BarcodeGraphs")
+            .attr("height", hbars)
+            .attr("width", wbars);
+
+            var KeyGraphs = d3.select("#Key")
+            .attr("height", keyheight)
+            .attr("width", keywidth);
+
+//            //key
+//            KeyGraphs.append("text")
+//                .attr("x", keystart)
+//                .attr("y", 45)
+//                .style("font-size", 20)
+//                .text("KEY:")
+//                .style("fill", "white")
+//                .style("opacity", .65);
+            KeyGraphs.append("circle")
+                .attr("cx", keystart+50)
+                .attr("cy", 43)
+                .attr("r", 5)
+                .style("opacity", .35)
+                .style("fill", "white");
+            KeyGraphs.append("text")
+                .attr("x", keystart+60)
+                .attr("y", 42.5)
+                .style("font-size", 12)
+                .text("quiet")
+                .attr("alignment-baseline", "middle")
+                .style("fill", "white")
+                .style("opacity", .65);
+//            KeyGraphs.append("circle")
+//                .attr("cx", keystart+120)
+//                .attr("cy", 42)
+//                .attr("r", 14)
+//                .style("opacity", .35)
+//                .style("fill", "white");
+//            KeyGraphs.append("text")
+//                .attr("x", keystart+140)
+//                .attr("y", 42.5)
+//                .style("font-size", 14)
+//                .text("med")
+//                .attr("alignment-baseline", "middle")
+//                .style("fill", "white")
+//                .style("opacity", .65);
+            KeyGraphs.append("circle")
+                .attr("cx", keystart+200)
+                .attr("cy", 42)
+                .attr("r", 20)
+                .style("opacity", .35)
+                .style("fill", "white");
+            KeyGraphs.append("text")
+                .attr("x", keystart+225)
+                .attr("y", 42.5)
+                .style("font-size", 16)
+                .text("loud")
+                .attr("alignment-baseline", "middle")
+                .style("fill", "white")
+                .style("opacity", .65);
+
+            //loads dat data
+            d3.json("spotify_data.json", callback);
+
+            function callback (error, data) {
+                songData = data;
+
+                //gets ranges of songdata ellements 
+                var rankExtent = d3.extent(songData, function (d){return d.rank;});
+                var countExtent = d3.extent(songData, function (d){return d.pca;});
+                var razExtent = d3.extent(songData, function (d){return d.loudness;});
+                //set scales
+                var rank = d3.scaleLinear()
+                .domain(rankExtent)
+                .range([20, width-20]);
+                var count = d3.scaleLinear()
+                .domain(countExtent)
+                .range([height-20, 20]);
+                var radSize = d3.scaleSqrt()
+                .domain(razExtent)
+                .range([5,20]);
+
+
+                //set axis
+                var xAxis2 = d3.axisBottom()
+                .scale(rank)
+                .ticks(3);
+                var yAxis2 = d3.axisLeft()
+                .scale(count)
+                .ticks(5);
+                //add axis as lines via append
+                var graph = d3.select("#graph");
+                graph 
+                    .append("line")
+                    .attr("x1", width/2)
+                    .attr("y1", 20)
+                    .attr("x2", width/2)
+                    .attr("y2", height - 20) 
+                    .attr("stroke", "white")
+                    .style("opacity", .2)
+                    .attr("stroke-width", 1.5);
+
+                graph
+                    .append("line")
+                    .attr("x1", 0)
+                    .attr("y1", height/2)
+                    .attr("x2", width)
+                    .attr("y2", height/2) 
+                    .attr("stroke", "white")
+                    .style("opacity", .2)
+                    .attr("stroke-width", 1.5);
+
+
+                //loop to add song 
+                /*
+                songData.forEach(function(d){
+                  graph.append("circle")
+                    .attr("cx", rank(d.rank))
+                    .attr("cy", count(d.energy))
+                    .attr("r", radSize(d.loudness))
+                    .style("opacity", .35)
+                    .style("fill", "white");
+                });
+                */
+                
+                var checkSongs = ["Location", "Just Hold On", "Your Song", "Mask Off", "Bank Account"];
+
+                function checkColor (data) {
+                    if (checkSongs.indexOf(data) >= 0){
+                        return ("assets/notes/MusicNoteGreen.png")
+                    } 
+                    else { 
+                        return ("assets/notes/MusicNote.png")
+                    };
+                };
+
+                var song_number = [46, 77, 91, 14, 94];
+                songData.forEach(function(d){
+                    graph.append("svg:image")
+                        .attr("x", rank(d.rank))
+                        .attr("y", height - count(d.pca))
+                        .attr("width", 2*radSize(d.loudness))
+                        .attr("height", 2*radSize(d.loudness))
+                        .attr("xlink:href", checkColor(d.name))
+                        .style("opacity", .4)
+                        .on("click", function () {console.log(d.rank)});
+                    if (song_number.indexOf(d.rank) >= 0) {
+                        graph.append("circle")
+                            .attr("cx", rank(d.rank) + radSize(d.loudness))
+                            .attr("cy", height - count(d.pca) + radSize(d.loudness))
+                            .attr("r", 30)
+                            .attr("fill", "transparent")
+                            .attr("stroke", "#1dd069")
+                            .attr("stroke-width", "3")
+                            .style("opacity", .5);
+                    }
+                });
+
+                //Labels
+                function graphQuadLabels(x, y, text, anchor) {
+                    graph.append("text")
+                        .attr("x", x)
+                        .attr("y", y)
+                        .style("font-size", 20)
+                        .text(text)
+                        .attr("font-family", "Montserrat")
+                        .attr("text-anchor", anchor)
+                        .style("fill", "white")
+                        .style("opacity", .6);
+                }
+                
+                graphQuadLabels(10,30,"Overplayed party hits", "start");
+                graphQuadLabels(width-10,30,"Less popular party hits", "end");
+                graphQuadLabels(0,height-10,"Chill songs everyone puts on repeat", "start");
+                graphQuadLabels(width-10,height-10,"(Relatively) hidden chill gems", "end");
+                
+                function graphAxisLabels(x, y, text, anchor) {
+                    graph.append("text")
+                        .attr("x", x)
+                        .attr("y", y)
+                        .style("font-size", 14)
+                        .text(text)
+                        .attr("font-family", "Roboto")
+                        .attr("text-anchor", anchor)
+                        .style("fill", "white")
+                        .style("opacity", .4);
+                }
+                
+                graphAxisLabels(10, height/2 + 20, "more popular", "start");
+                graphAxisLabels(width - 10, height/2 + 20, "less popular", "end");
+                graphAxisLabels(width/2, 20, "more dynamic", "middle");
+                graphAxisLabels(width/2, height - 20, "less dynamic", "middle");
+                
+                function graphSongLabels(x, y, id, anchor) {
+                    d = songData[id];
+                    var song = d.name;
+                    var artists = d.artists;
+                    graph.append("text")
+                        .attr("x", x)
+                        .attr("y", y)
+                        .style("font-size", 20)
+                        .text(song)
+                        .attr("font-family", "Montserrat")
+                        .attr("text-anchor", anchor)
+                        .style("fill", "#1dd069")
+                        .style("opacity", .8);
+                    graph.append("text")
+                        .attr("x", x)
+                        .attr("y", y + 20)
+                        .style("font-size", 16)
+                        .text(artists)
+                        .attr("font-family", "Roboto")
+                        .attr("text-anchor", anchor)
+                        .style("fill", "#1dd069")
+                        .style("opacity", .8);
+                }
+                
+                graphSongLabels(210,height - 85,14, "start");
+                graphSongLabels(510,height - 50,46, "start");
+                graphSongLabels(746,127,77, "end");
+                graphSongLabels(880,100,91, "end");
+                graphSongLabels(900,height - 157,94, "end");
+
+
+                ////////////////Start of Scores////////////////////
+                var marginLeft = 30;
+                var marginRight = 30;
+                var marginTop = 30;
+                var marginBottom = 30;
+
+                var widthScores = 800;				//width of the actual graph
+                var heightScores = 300;			//height of the actual graph
+
+                var svgScores = d3.select("#VerticalGraph")
+                .attr("width", widthScores + marginLeft + marginRight)
+                .attr("height", heightScores+marginBottom)
+                var xAxisScore = d3.scaleBand()		//scaleBand returns a band, with properties used to make bar graphs
+                .range([0, widthScores])
+                .padding(0.95);
+                var yAxisScore = d3.scaleLinear()
+                .range([heightScores, 0])
+                .nice();
+                var minY;
+                var maxY;
+
+                function checkDirection (p1) {
+                    if (p1>0){
+                        return ("translate(0,20)")
+                    } 
+                    else { 
+                        return ("translate(0,-20)")
+                    };
+                };
+
+
+                d3.csv("data_Scores.csv", function(data){
+                    xAxisScore.domain(data.map(function(d) {return d.Feature; }));
+                    minY = d3.min(data, function(d){return d.Value; });
+                    maxY = d3.max(data, function(d){return d.Value; });
+                    yAxisScore.domain([minY, maxY])
+                        .range([heightScores, 0])
+                        .nice();
+
+                    svgScores.selectAll(".bar")
+                        .data(data)
+                        .enter().append("line")
+                        .attr("x1", function(d) {return xAxisScore(d.Feature); })
+                        .attr("y1", function(d) {return (heightScores/2);})			
+                        .attr("x2", function(d) {return xAxisScore(d.Feature); })												
+                        .attr("y2", function(d) {return (yAxisScore(d.Value))/2; })
+                        .attr("stroke", "white")
+                        .style("opacity", .65)
+                        .attr("stroke-width", 1.5)
+                        .attr("stroke-dasharray","5, 5");
+
+                    svgScores.append("line")
+                        .attr("x1", 0)
+                        .attr("y1", heightScores/2)			
+                        .attr("x2", widthScores)												
+                        .attr("y2", heightScores/2)
+                        .attr("stroke", "white")
+                        .style("opacity", .65)
+                        .attr("stroke-width", 1.5);
+
+
+                    svgScores.selectAll(".circle")
+                        .data(data)
+                        .enter().append("circle")
+                        .attr("cx", function(d) {return xAxisScore(d.Feature); })
+                        .attr("cy", function(d) {return (yAxisScore(d.Value)/2); })
+                        .attr("r", 5)
+                        .style("fill", "transparent")
+                        .attr("stroke", "white")
+                        .attr("stroke-width", 1.5)
+                        .style("opacity", .65);
+
+                    svgScores.selectAll(".text")
+                        .data(data)
+                        .enter().append("text")
+                        .attr("x", function(d) {return xAxisScore(d.Feature); })
+                        .attr("y", function(d) {return (yAxisScore(d.Value)/2); })
+                        .text(function(d) {return d.Feature})
+                        .style("font-size", 16)
+                        .style("fill", "white")
+                        .style("opacity", .65)
+                        .attr("text-anchor","middle")
+                        .attr("transform",function(d) {return checkDirection(yAxisScore(d.Value));} );
+
+                });
+
+
+
+
+                /////////////////Start of Bargraphs/////////////////////
+                BarOffset=50;
+                BarStart=80;
+                BarHeight=40;
+                BarStart1=180;
+                BarStart2=280;
+
+                bHeightStart=BarStart;
+                bHeightEnd=BarStart-BarHeight;
+
+                bHeightStart1=BarStart1;
+                bHeightEnd1=BarStart1-BarHeight;
+
+                bHeightStart2=BarStart2;
+                bHeightEnd2=BarStart2-BarHeight;
+
+                bWidthStart= 0+BarOffset;
+                bWidthEnd= wbars- (2*BarOffset);
+
+                //Barcode Graph Tree
+                var aExtent = d3.extent(songData, function (d){return d.speechiness;});
+                var aScale = d3.scaleLinear()
+                .domain([0,1])
+                .range([bWidthStart, bWidthEnd]);
+                barcodeGraphs.append("rect")
+                    .attr("x", bWidthStart)
+                    .attr("y", BarStart-BarHeight)
+                    .attr("width", bWidthEnd)
+                    .attr("height", (BarHeight))
+                    .attr("class", "rectBox")
+                    .attr("Stroke","white")
+                    .attr("stroke-width", "1")
+                    .style("opacity", 1)
+                    .style("fill", "transparent");
+                barcodeGraphs.append("text")
+                    .attr("x", bWidthStart)
+                    .attr("y", BarStart-BarHeight-5)
+                    .style("font-size", 16)
+                    .text("Speechiness")
+                    .style("fill", "white")
+                    .style("opacity", .65);
+                barcodeGraphs.append("text")
+                    .attr("x", bWidthStart)
+                    .attr("y", BarStart+10)
+                    .style("font-size", 12)
+                    .text(aExtent[0].toFixed(3))
+                    .style("fill", "white")
+                    .style("opacity", .65);
+                barcodeGraphs.append("text")
+                    .attr("x", wbars-BarOffset)
+                    .attr("y", BarStart+10)
+                    .style("font-size", 12)
+                    .text(aExtent[1].toFixed(3))
+                    .style("fill", "white")
+                    .style("opacity", .65);
+                songData.forEach(function(d){
+                    barcodeGraphs.append("line")
+                        .attr("x1", bWidthStart+(aScale(d.speechiness)))
+                        .attr("y1", bHeightStart)
+                        .attr("x2", bWidthStart+(aScale(d.speechiness)))
+                        .attr("y2", bHeightEnd)
+                        .attr("stroke", "white")
+                        .attr("stroke-width", "1")
+                        .style("opacity", .45);
+                });
+
+                //Barcode Graph Two
+                var bExtent = d3.extent(songData, function (d){return d.energy;});
+                var bScale = d3.scaleLinear()
+                .domain([0,1])
+                .range([bWidthStart, bWidthEnd]);
+
+                barcodeGraphs.append("rect")
+                    .attr("x", bWidthStart)
+                    .attr("y", BarStart1-BarHeight)
+                    .attr("width", bWidthEnd)
+                    .attr("height", (BarHeight))
+                    .attr("class", "rectBox")
+                    .attr("Stroke","white")
+                    .attr("stroke-width", "1")
+                    .style("opacity", 1)
+                    .style("fill", "transparent");
+                barcodeGraphs.append("text")
+                    .attr("x", bWidthStart)
+                    .attr("y", BarStart1-BarHeight-5)
+                    .style("font-size", 16)
+                    .text("Energy")
+                    .style("fill", "white")
+                    .style("opacity", .65);
+                barcodeGraphs.append("text")
+                    .attr("x", bWidthStart)
+                    .attr("y", BarStart1+10)
+                    .style("font-size", 12)
+                    .text(bExtent[0].toFixed(3))
+                    .style("fill", "white")
+                    .style("opacity", .65);
+                barcodeGraphs.append("text")
+                    .attr("x", wbars-BarOffset)
+                    .attr("y", BarStart1+10)
+                    .style("font-size", 12)
+                    .text(bExtent[1].toFixed(3))
+                    .style("fill", "white")
+                    .style("opacity", .65);
+                songData.forEach(function(d){
+                    barcodeGraphs.append("line")
+                        .attr("x1", bWidthStart+(bScale(d.energy)))
+                        .attr("y1", bHeightStart1)
+                        .attr("x2", bWidthStart+(bScale(d.energy)))
+                        .attr("y2", bHeightEnd1)
+                        .attr("stroke", "white")
+                        .attr("stroke-width", "1")
+                        .style("opacity", .45);
+                });
+
+
+                //Barcode Graph Three
+                var cExtent = d3.extent(songData, function (d){return d.loudness;});
+                var cScale = d3.scaleLinear()
+                .domain(cExtent)
+                .range([bWidthStart, bWidthEnd]);
+
+                barcodeGraphs.append("rect")
+                    .attr("x", bWidthStart)
+                    .attr("y", BarStart2-BarHeight)
+                    .attr("width", bWidthEnd)
+                    .attr("height", (BarHeight))
+                    .attr("class", "rectBox")
+                    .attr("Stroke","white")
+                    .attr("stroke-width", "1")
+                    .style("opacity", 1)
+                    .style("fill", "transparent");
+                barcodeGraphs.append("text")
+                    .attr("x", bWidthStart)
+                    .attr("y", BarStart2-BarHeight-5)
+                    .style("font-size", 16)
+                    .text("Loudness")
+                    .style("fill", "white")
+                    .style("opacity", .65);
+                barcodeGraphs.append("text")
+                    .attr("x", bWidthStart)
+                    .attr("y", BarStart2+10)
+                    .style("font-size", 12)
+                    .text(cExtent[0].toFixed(3))
+                    .style("fill", "white")
+                    .style("opacity", .65);
+                barcodeGraphs.append("text")
+                    .attr("x", wbars-BarOffset)
+                    .attr("y", BarStart2+10)
+                    .style("font-size", 12)
+                    .text(cExtent[1].toFixed(3))
+                    .style("fill", "white")
+                    .style("opacity", .65);
+                songData.forEach(function(d){
+                    barcodeGraphs.append("line")
+                        .attr("x1", bWidthStart+(cScale(d.loudness)))
+                        .attr("y1", bHeightStart2)
+                        .attr("x2", bWidthStart+(cScale(d.loudness)))
+                        .attr("y2", bHeightEnd2)
+                        .attr("stroke", "white")
+                        .attr("stroke-width", "1")
+                        .style("opacity", .45);
+                });
+
+
+                //Spotify Track Data
+                var track_height = 750;
+                var track_width = 1200;
+                var num_boxes = 5;
+                var box_gap = 80;
+                var box_dimen = (track_width - (box_gap*(num_boxes+1))) / num_boxes;
+                var top_offset = 40;
+                var song_name_offset = 80;
+                var artist_offset = 24;
+
+                var attribute_offset = 30
+                var attribute_spacing = 10
+
+
+                var album_art_array = ["location.jpg","justholdon.jpg","yoursong.jpg","maskoff.jpg","bankaccount.png"];
+                var spotify_code_array = ["location.jpg","justholdon.jpg","yoursong.jpg","maskoff.jpg","bankaccount.jpg"];
+                var song_number = [46, 77, 91, 14, 94];
+
+                var spotifyTracks = d3.select("#SpotifyTracks")
+                .attr("height", track_height)
+                .attr("width", track_width);
+
+                spotifyTracks.append("rect")
+                    .attr("x", 0)
+                    .attr("y", 0)
+                    .attr("width", track_width)
+                    .attr("height", track_height)
+                    .attr("class", "rectBox")
+                    .attr("Stroke","black")
+                    .attr("stroke-width", "1")
+                    .style("opacity", 1)
+                    .style("fill", "transparent");
+
+                for (var i = 0; i < num_boxes; i++) {
+                    var xPos = i * (box_dimen + box_gap);
+
+                    spotifyTracks.append("svg:image")
+                        .attr("xlink:href", 'assets/albumart/' + album_art_array[i])
+                        .attr("x", xPos + box_gap)
+                        .attr("y", top_offset)
+                        .attr("width", box_dimen)
+                        .attr("height", box_dimen);
+                    spotifyTracks.append("svg:image")
+                        .attr("xlink:href", 'assets/spotifycodes/' + spotify_code_array[i])
+                        .attr("x", xPos + box_gap)
+                        .attr("y", box_dimen + top_offset)
+                        .attr("width", box_dimen);
+                    spotifyTracks.append("circle")
+                        .attr("cx", xPos + box_gap + box_dimen)
+                        .attr("cy", top_offset)
+                        .attr("r", 35)
+                        .attr("fill", '#0e0e0e')
+                        .attr("stroke", "#1dd069")
+                        .attr('stroke-width', 3)
+                        .attr("opacity", '0.8');
+                    spotifyTracks.append("text")
+                        .attr("x", xPos + box_gap + box_dimen)
+                        .attr("y", top_offset)
+                        .attr("text-anchor", "middle")
+                        .attr("alignment-baseline", "middle")
+                        .attr("font-family", "Roboto")
+                        .attr("font-size", 26)
+                        .attr("fill", '#1dd069')
+                        .attr("opacity", '0.8')
+                        .text("#" + songData[song_number[i]].rank)
+                    spotifyTracks.append("text")
+                        .attr("x", xPos + box_gap + 0.5*box_dimen)
+                        .attr("y", box_dimen + top_offset + song_name_offset)
+                        .attr("text-anchor", "middle")
+                        .style("font-size", 25)
+                        .style("fill", "white")
+                        .text(songData[song_number[i]].name);
+                    spotifyTracks.append("text")
+                        .attr("x", xPos + box_gap + 0.5*box_dimen)
+                        .attr("y", box_dimen + top_offset + song_name_offset + artist_offset)
+                        .attr("text-anchor", "middle")
+                        .attr("font-family", "Roboto")
+                        .style("fill", "white")
+                        .style("font-size", 18)
+                        .style("opacity", .65)
+                        .text(songData[song_number[i]].artists);
+
+                    for (var j = 0; j < 5; j++) {
+                        attributes = ["loudness", "energy", "valence", "speechiness", "tempo"];
+                        
+                        if (j == i) {
+                            boxColor = '#1dd069';
+                        } else {
+                            boxColor = 'black';
+                        }
+
+                        spotifyTracks.append("rect")
+                            .attr("x", xPos + box_gap)
+                            .attr("y", box_dimen + top_offset + song_name_offset + artist_offset + attribute_offset + j*(attribute_spacing + 0.5*box_dimen))
+                            .attr("width", box_dimen)
+                            .attr("height", 0.5*box_dimen)
+                            .attr("fill", boxColor)
+                            .attr("opacity", '0.5');
+                        spotifyTracks.append("text")
+                            .attr("x", xPos + box_gap + 0.5*box_dimen)
+                            .attr("y", box_dimen + top_offset + song_name_offset + artist_offset + attribute_offset + 0.23*box_dimen + j*(attribute_spacing + 0.5*box_dimen))
+                            .attr("text-anchor", "middle")
+                            .attr("alignment-baseline", "middle")
+                            .attr("font-family", "Montserrat")
+                            .attr("fill", 'white')
+                            .attr("opacity", '0.5')
+                            .attr("font-size", 40)
+                            .text(songData[song_number[i]][attributes[j]].toFixed(2));
+                        spotifyTracks.append("text")
+                            .attr("x", xPos + box_gap + 0.5*box_dimen)
+                            .attr("y", box_dimen + top_offset + song_name_offset + artist_offset + attribute_offset + 0.4*box_dimen + j*(attribute_spacing + 0.5*box_dimen))
+                            .attr("text-anchor", "middle")
+                            .attr("alignment-baseline", "middle")
+                            .attr("font-family", "Roboto")
+                            .attr("font-size", 16)
+                            .attr("fill", 'white')
+                            .attr("opacity", '0.5')
+                            .text(attributes[j]);
+                    }
+                };
+            }
+        </script>
+    </body>
 </html>
