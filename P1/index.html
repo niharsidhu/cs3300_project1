@@ -522,10 +522,10 @@ songData.forEach(function(d){
     var artist_offset = 24;
     
     
-    var album_art_array = ["albumart.jpg","albumart.jpg","albumart.jpg","albumart.jpg","albumart.jpg"];
-    var spotify_code_array = ["spotifycode.png","spotifycode.png","spotifycode.png","spotifycode.png","spotifycode.png"];
-    var song_name_array = ["Float","Roses","Lose My Mind","Bear","Move"];
-    var artist_array = ["Pacific Air","Pacific Air","Pacific Air","Pacific Air","Pacific Air"];
+    var album_art_array = ["location.jpg","justholdon.jpg","theresnothingholdingmeback.jpg","maskoff.jpg","bankaccount.png"];
+    var spotify_code_array = ["location.jpg","justholdon.jpg","theresnothingholdingmeback.jpg","maskoff.jpg","bankaccount.png"];
+    var song_name_array = ["Location","Just Hold On","There's Nothing Holdin' Me Back","Mask Off","Bank Account"];
+    var artist_array = ["Khalid","Steve Aoki","Shawn Mendes","Future","21 Savage"];
     
     
     var spotifyTracks = d3.select("#SpotifyTracks")
@@ -547,7 +547,7 @@ songData.forEach(function(d){
         var xPos = i * (box_dimen + box_gap);
         
         spotifyTracks.append("svg:image")
-            .attr("xlink:href", album_art_array[i])
+            .attr("xlink:href", 'assets/albumart/' + album_art_array[i])
             .attr("x", xPos)
             .attr("y", 0)
             .attr("width", box_dimen)
