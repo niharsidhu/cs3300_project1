@@ -4,12 +4,11 @@
 <link href="https://fonts.googleapis.com/css?family=Barlow+Condensed" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css?family=Signika" rel="stylesheet">
 <script src="https://d3js.org/d3.v4.min.js"></script>
-<script src="d3-annotation.js"></script>
 <link href="John.css"/>
 <style>
 p {
   text-align: center;
-  color:#FFFFFF;
+  color:#84bd00;
 }
 #Project1{
     font-family: 'Signika', sans-serif;
@@ -19,44 +18,22 @@ p {
 
 }
 body{
-   background: #181818;
+   background: #ecebe8;
 }
 #rectBox{
 
 }
 
-#text{
-	opacity: .65;
-	color: #FFFFFF;
-
-}
-
-
-.axisWhite line{
-  stroke: white;
-}
-
-.axisWhite path{
-  stroke: white;
-}
-
-.axisWhite text{
-  fill: white;
-}  
-
-
 </style>
 </head>
 <body class="content">
 <p id="Project1">
-    Top Spotify Tracks: Populatriy and Uniqueness
+    Top Spotify Tracks: Popularity and Uniqueness
     <br>
     <br>
 <svg id="Key" height="10" width="10"></svg>
-	<br>
 <svg id="Graph" height="10" width="10"></svg>
     <br>
-<svg id="VerticalGraph" height="10" width="10"></svg>
     <br>
 <svg id="BarcodeGraphs" height="10" width="10"></svg>
     <br>
@@ -72,12 +49,11 @@ var width= 800;
 var height= 600;
 
 var wbars=800;
-var hbars=300;
+var hbars=800;
 
 var keystart=260;
 
 
-/////////////////////////Main Top Graph/////////////////////////
 
 //sizes top graph to h x w
 var graph = d3.select("#Graph")
@@ -98,46 +74,39 @@ KeyGraphs.append("text")
     .attr("y", 45)
     .style("font-size", 20)
     .text("KEY:")
-    .style("fill", "white")
     .style("opacity", .65);
 KeyGraphs.append("circle")
     .attr("cx", keystart+70)
     .attr("cy", 40)
     .attr("r", 5)
-    .style("opacity", .35)
-    .style("fill", "white");
+    .style("opacity", .35);
 KeyGraphs.append("text")
     .attr("x", keystart+80)
     .attr("y", 42.5)
     .style("font-size", 12)
     .text("small")
-    .style("fill", "white")
     .style("opacity", .65);
 KeyGraphs.append("circle")
     .attr("cx", keystart+140)
     .attr("cy", 40)
     .attr("r", 14)
-    .style("opacity", .35)
-    .style("fill", "white");
+    .style("opacity", .35);
 KeyGraphs.append("text")
     .attr("x", keystart+160)
     .attr("y", 42.5)
     .style("font-size", 14)
     .text("med")
-    .style("fill", "white")
     .style("opacity", .65);
 KeyGraphs.append("circle")
     .attr("cx", keystart+215)
     .attr("cy", 40)
     .attr("r", 20)
-    .style("opacity", .35)
-    .style("fill", "white");
+    .style("opacity", .35);
 KeyGraphs.append("text")
     .attr("x", keystart+240)
     .attr("y", 42.5)
     .style("font-size", 16)
     .text("large")
-    .style("fill", "white")
     .style("opacity", .65);
 
 //loads dat data
@@ -161,7 +130,6 @@ var radSize = d3.scaleSqrt()
     .domain(razExtent)
     .range([5,20]);
 
-
 //set axis
 var xAxis2 = d3.axisBottom()
     .scale(rank)
@@ -177,9 +145,8 @@ graph
     .attr("y1", 0)
     .attr("x2", width/2)
     .attr("y2", height) 
-    .attr("stroke", "white")
-    .style("opacity", .65)
-    .attr("stroke-width", 1.5);
+    .attr("stroke", "black")
+    .attr("stroke-width", 3);
 
 graph
     .append("line")
@@ -187,159 +154,53 @@ graph
     .attr("y1", height/2)
     .attr("x2", width)
     .attr("y2", height/2) 
-    .attr("stroke", "white")
-    .style("opacity", .65)
-    .attr("stroke-width", 1.5);
+    .attr("stroke", "black")
+    .attr("stroke-width", 3);
 
 
 //loop to add song 
-/*
 songData.forEach(function(d){
   graph.append("circle")
     .attr("cx", rank(d.rank))
     .attr("cy", count(d.energy))
     .attr("r", radSize(d.loudness))
-    .style("opacity", .35)
-    .style("fill", "white");
+    .style("opacity", .35);
 });
-*/
-
-function checkColor (data) {
-  if (data == "Shape of You"){
-   return ("MusicNoteGreen.png")
-} 
-   else { 
-   	return ("MusicNote.png")
-   };
-};
-
-songData.forEach(function(d){
-    graph.append("svg:image")
-    .attr("x", rank(d.rank))
-    .attr("y", count(d.energy))
-    .attr("width", 2*radSize(d.loudness))
-    .attr("height", 2*radSize(d.loudness))
-    .attr("xlink:href", checkColor(d.name))
-    .style("opacity", .35)
-    .on("click", function () {console.log(d.rank)});
-});
-
 //Labels
 graph.append("text")
     .attr("x", 0)
     .attr("y", 12)
     .style("font-size", 16)
     .text("Quad A")
-    .style("fill", "white")
     .style("opacity", .65);
 graph.append("text")
     .attr("x", width-75)
     .attr("y", 12)
-    .style("font-size", 16) 
+    .style("font-size", 16)
     .text("Quad B")
-    .style("fill", "white")
     .style("opacity", .65);
 graph.append("text")
     .attr("x", 0)
     .attr("y", height-10)
     .style("font-size", 16)
     .text("Quad C")
-    .style("fill", "white")
     .style("opacity", .65);
 graph.append("text")
     .attr("x", width-75)
     .attr("y", height-10)
     .style("font-size", 16)
     .text("Quad D")
-    .style("fill", "white")
     .style("opacity", .65);
 
 
-////////////////Start of Scores////////////////////
-var marginLeft = 30;
-var marginRight = 30;
-var marginTop = 30;
-var marginBottom = 30;
-
-var widthScores = 800;				//width of the actual graph
-var heightScores = 300;			//height of the actual graph
-
-var svgScores = d3.select("#VerticalGraph")
-			.attr("width", widthScores + marginLeft + marginRight)
-			.attr("height", heightScores+marginBottom)
-var xAxisScore = d3.scaleBand()		//scaleBand returns a band, with properties used to make bar graphs
-			.range([0, widthScores])
-			.padding(0.95);
-var yAxisScore = d3.scaleLinear()
-			.range([heightScores, 0])
-			.nice();
-var minY;
-var maxY;
-
-function checkDirection (p1) {
-  if (p1>0){
-   return ("translate(0,20)")
-} 
-   else { 
-   	return ("translate(0,-20)")
-   };
-};
 
 
-d3.csv("data_Scores.csv", function(data){
-	xAxisScore.domain(data.map(function(d) {return d.Feature; }));
-	minY = d3.min(data, function(d){return d.Value; });
-	maxY = d3.max(data, function(d){return d.Value; });
-	yAxisScore.domain([minY, maxY])
-	     .range([heightScores, 0])
-	     .nice();
-
-svgScores.selectAll(".bar")
-	.data(data)
-	.enter().append("line")
-	.attr("x1", function(d) {return xAxisScore(d.Feature); })
-	.attr("y1", function(d) {return (heightScores/2);})			
-	.attr("x2", function(d) {return xAxisScore(d.Feature); })												
-	.attr("y2", function(d) {return (yAxisScore(d.Value))/2; })
-	.attr("stroke", "white")
-    .style("opacity", .65)
-    .attr("stroke-width", 1.5)
-    .attr("stroke-dasharray","5, 5");
-
-  svgScores.append("line")
-	.attr("x1", 0)
-	.attr("y1", heightScores/2)			
-	.attr("x2", widthScores)												
-	.attr("y2", heightScores/2)
-	.attr("stroke", "white")
-    .style("opacity", .65)
-    .attr("stroke-width", 1.5);
 
 
-svgScores.selectAll(".circle")
-	.data(data)
-	.enter().append("circle")
-	.attr("cx", function(d) {return xAxisScore(d.Feature); })
-	.attr("cy", function(d) {return (yAxisScore(d.Value)/2); })
-	.attr("r", 5)
-    .style("fill", "transparent")
-    .attr("stroke", "white")
-    .attr("stroke-width", 1.5)
-    .style("opacity", .65);
 
-svgScores.selectAll(".text")
-	.data(data)
-	.enter().append("text")
-	.attr("x", function(d) {return xAxisScore(d.Feature); })
-	.attr("y", function(d) {return (yAxisScore(d.Value)/2); })
-	.text(function(d) {return d.Feature})
-	.style("font-size", 16)
-    .style("fill", "white")
-    .style("opacity", .65)
-    .attr("text-anchor","middle")
-    .attr("transform",function(d) {return checkDirection(yAxisScore(d.Value));} );
 
-});
+
+
 
 
 
@@ -366,7 +227,7 @@ bWidthEnd= wbars- (2*BarOffset);
 //Barcode Graph Tree
 var aExtent = d3.extent(songData, function (d){return d.speechiness;});
 var aScale = d3.scaleLinear()
-    .domain([0,1])
+    .domain(aExtent)
     .range([bWidthStart, bWidthEnd]);
 barcodeGraphs.append("rect")
     .attr("x", bWidthStart)
@@ -374,7 +235,7 @@ barcodeGraphs.append("rect")
     .attr("width", bWidthEnd)
     .attr("height", (BarHeight))
     .attr("class", "rectBox")
-    .attr("Stroke","white")
+    .attr("Stroke","black")
     .attr("stroke-width", "1")
     .style("opacity", 1)
     .style("fill", "transparent");
@@ -383,21 +244,18 @@ barcodeGraphs.append("text")
     .attr("y", BarStart-BarHeight-5)
     .style("font-size", 16)
     .text("Speechiness")
-    .style("fill", "white")
     .style("opacity", .65);
 barcodeGraphs.append("text")
     .attr("x", bWidthStart)
     .attr("y", BarStart+10)
     .style("font-size", 12)
     .text(aExtent[0].toFixed(3))
-    .style("fill", "white")
     .style("opacity", .65);
 barcodeGraphs.append("text")
     .attr("x", wbars-BarOffset)
     .attr("y", BarStart+10)
     .style("font-size", 12)
     .text(aExtent[1].toFixed(3))
-    .style("fill", "white")
     .style("opacity", .65);
 songData.forEach(function(d){
   barcodeGraphs.append("line")
@@ -405,7 +263,7 @@ songData.forEach(function(d){
     .attr("y1", bHeightStart)
     .attr("x2", bWidthStart+(aScale(d.speechiness)))
     .attr("y2", bHeightEnd)
-    .attr("stroke", "white")
+    .attr("stroke", "black")
     .attr("stroke-width", "1")
     .style("opacity", .45);
 });
@@ -413,7 +271,7 @@ songData.forEach(function(d){
 //Barcode Graph Two
 var bExtent = d3.extent(songData, function (d){return d.energy;});
 var bScale = d3.scaleLinear()
-    .domain([0,1])
+    .domain(bExtent)
     .range([bWidthStart, bWidthEnd]);
 
 barcodeGraphs.append("rect")
@@ -422,7 +280,7 @@ barcodeGraphs.append("rect")
     .attr("width", bWidthEnd)
     .attr("height", (BarHeight))
     .attr("class", "rectBox")
-    .attr("Stroke","white")
+    .attr("Stroke","black")
     .attr("stroke-width", "1")
     .style("opacity", 1)
     .style("fill", "transparent");
@@ -431,21 +289,18 @@ barcodeGraphs.append("text")
     .attr("y", BarStart1-BarHeight-5)
     .style("font-size", 16)
     .text("Energy")
-    .style("fill", "white")
     .style("opacity", .65);
 barcodeGraphs.append("text")
     .attr("x", bWidthStart)
     .attr("y", BarStart1+10)
     .style("font-size", 12)
     .text(bExtent[0].toFixed(3))
-    .style("fill", "white")
     .style("opacity", .65);
 barcodeGraphs.append("text")
     .attr("x", wbars-BarOffset)
     .attr("y", BarStart1+10)
     .style("font-size", 12)
     .text(bExtent[1].toFixed(3))
-    .style("fill", "white")
     .style("opacity", .65);
 songData.forEach(function(d){
   barcodeGraphs.append("line")
@@ -453,7 +308,7 @@ songData.forEach(function(d){
     .attr("y1", bHeightStart1)
     .attr("x2", bWidthStart+(bScale(d.energy)))
     .attr("y2", bHeightEnd1)
-    .attr("stroke", "white")
+    .attr("stroke", "black")
     .attr("stroke-width", "1")
     .style("opacity", .45);
 });
@@ -471,7 +326,7 @@ barcodeGraphs.append("rect")
     .attr("width", bWidthEnd)
     .attr("height", (BarHeight))
     .attr("class", "rectBox")
-    .attr("Stroke","white")
+    .attr("Stroke","black")
     .attr("stroke-width", "1")
     .style("opacity", 1)
     .style("fill", "transparent");
@@ -480,21 +335,18 @@ barcodeGraphs.append("text")
     .attr("y", BarStart2-BarHeight-5)
     .style("font-size", 16)
     .text("Loudness")
-    .style("fill", "white")
     .style("opacity", .65);
 barcodeGraphs.append("text")
     .attr("x", bWidthStart)
     .attr("y", BarStart2+10)
     .style("font-size", 12)
     .text(cExtent[0].toFixed(3))
-    .style("fill", "white")
     .style("opacity", .65);
 barcodeGraphs.append("text")
     .attr("x", wbars-BarOffset)
     .attr("y", BarStart2+10)
     .style("font-size", 12)
     .text(cExtent[1].toFixed(3))
-    .style("fill", "white")
     .style("opacity", .65);
 songData.forEach(function(d){
   barcodeGraphs.append("line")
@@ -502,17 +354,16 @@ songData.forEach(function(d){
     .attr("y1", bHeightStart2)
     .attr("x2", bWidthStart+(cScale(d.loudness)))
     .attr("y2", bHeightEnd2)
-    .attr("stroke", "white")
+    .attr("stroke", "black")
     .attr("stroke-width", "1")
     .style("opacity", .45);
 });
-
+    
+    
+    
 };
 
-
-
-
- //Spotify Track Data
+    //Spotify Track Data
     var track_height = 500;
     var track_width = 1200;
     var num_boxes = 5;
@@ -562,21 +413,16 @@ songData.forEach(function(d){
             .attr("y", box_dimen + song_name_offset)
             .attr("text-anchor", "middle")
             .style("font-size", 30)
-            .style("fill", "white")
             .text(song_name_array[i]);
         spotifyTracks.append("text")
             .attr("x", xPos + 0.5*box_dimen)
             .attr("y", box_dimen + song_name_offset + artist_offset)
             .attr("text-anchor", "middle")
-            .style("fill", "white")
             .style("font-size", 20)
             .style("opacity", .65)
             .text(artist_array[i]);
     }
-
-
-
-
+    
 </script>
 
 </html>
