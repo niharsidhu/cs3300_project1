@@ -28,7 +28,7 @@
 
             }
             body{
-                background: linear-gradient(#252525, #101010);
+                background: linear-gradient(#202020, #101010);
             }
             #rectBox{
 
@@ -59,74 +59,65 @@
 
     <body class="content">
         <h1><br>
-            <span style="background: black">
                 Analyzing <span style="color: #1dd069">Spotify's</span> Top 100 Songs of 2017
-            </span>
             
         </h1>
         <p id="Project1">
-            <span style="background: black">
                 Spotify's top 100 tracks have been collectively listened to billions of times.
-            </span>
             <br>
-            <span style="background: black">
                 We picked <span style="color: #1dd069">five outliers</span> to help us <span style="color: #1dd069">determine the factors that make songs unique</span>.
-            </span>
-            <br>
-            <svg id="Key" height="10" width="10"></svg>
-            <br>
-            <svg id="Graph" height="10" width="10"></svg>
             <br>
             <br>
-            <span style="background: black">
+                <svg id="Key" height="10" width="10"></svg>
+            <br>
+                <svg id="Graph" height="10" width="10"></svg>
+            <br>
+            <br>
+            <br>
+
                 Each one of these five songs is an outlier in a different factor.
                 <br>
                 These factors, combined, determine how <span style="color: #1dd069">"dynamic"</span> a song is.
-            </span>
+
             <br>
             <br>
-            <span style="background: black">
+            
                 We used <span style="color: #1dd069">principal component analysis</span> (PCA) to find these five factors.
                 <br>
                 PCA mathematically tells us that they are <span style="color: #1dd069">the most significant</span> factors in our dataset.
-            </span>
+
             <br>
             <br>
-            <svg id="VerticalGraph" height="10" width="10"></svg>
+            <br>
+                <svg id="VerticalGraph" height="10" width="10"></svg>
             <br>
             <br>
-            <span style="background: black">
-                These five factors are, in order from most to least important:
+                These five factors are (in order from most to least important):
                 <br>
                 <span style="color: #1dd069">loudness</span>,
                 <span style="color: #1dd069">energy</span>,
                 <span style="color: #1dd069">valence</span>,
                 <span style="color: #1dd069">speechiness</span>, and
                 <span style="color: #1dd069">tempo</span>.
-            </span>
             <br>
             <br>
-                <span style="background: black">
                 Let's go into more detail for each of these factors.
-            </span>
             <br>
             <br>
-            <svg id="BarcodeGraphs" height="10" width="10"></svg>
+            <br>
+            <svg id="loudnessBarcode" height="10" width="10"></svg>
             <br>
             <br>
-            <svg id="LoudnessBarcode" height="10" width="10"></svg>
+            <svg id="energyBarcode" height="10" width="10"></svg>
             <br>
             <br>
-            <svg id="EnergyBarcode" height="10" width="10"></svg>
+            <svg id="valenceBarcode" height="10" width="10"></svg>
             <br>
             <br>
-            <svg id="ValenceBarcode" height="10" width="10"></svg>
+            <svg id="speechinessBarcode" height="10" width="10"></svg>
             <br>
             <br>
-            <svg id="SpeechinessBarcode" height="10" width="10"></svg>
-            <br>
-            <br>
-            <svg id="TempoBarcode" height="10" width="10"></svg>
+            <svg id="tempoBarcode" height="10" width="10"></svg>
             <br>
             <br>
             <span style="background: black">
@@ -140,6 +131,8 @@
         </p>
 
         <script>
+            var attributes = ["loudness", "energy", "valence", "speechiness", "tempo"];
+            
             var keywidth= 800;
             var keyheight= 80;
 
@@ -147,7 +140,7 @@
             var height= 600;
 
             var wbars=1000;
-            var hbars=500;
+            var hbars=300;
 
             var keystart=260;
 
@@ -158,11 +151,7 @@
             var graph = d3.select("#Graph")
             .attr("height", height)
             .attr("width", width);
-
-            var barcodeGraphs = d3.select("#BarcodeGraphs")
-            .attr("height", hbars)
-            .attr("width", wbars);
-
+            
             var KeyGraphs = d3.select("#Key")
             .attr("height", keyheight)
             .attr("width", keywidth);
@@ -295,9 +284,9 @@
 
                 var song_number = [46, 77, 91, 14, 94];
                 songData.forEach(function(d){
-                    var imageOpacity = 0.3;
+                    var imageOpacity = 0.4;
                     if (song_number.indexOf(d.rank) >= 0) {
-                        imageOpacity = 0.6;
+                        imageOpacity = 0.7;
                         graph.append("circle")
                             .attr("cx", rank(d.rank) + radSize(d.loudness))
                             .attr("cy", height - count(d.pca) + radSize(d.loudness))
@@ -389,8 +378,8 @@
                 var marginTop = 30;
                 var marginBottom = 30;
 
-                var widthScores = 800;				//width of the actual graph
-                var heightScores = 300;			//height of the actual graph
+                var widthScores = 800;	//width of the actual graph
+                var heightScores = 300; //height of the actual graph
 
                 var svgScores = d3.select("#VerticalGraph")
                 .attr("width", widthScores + marginLeft + marginRight)
@@ -468,228 +457,104 @@
                         .attr("transform",function(d) {return checkDirection(yAxisScore(d.Value));} );
 
                 });
-
-
-
-
-                /////////////////Start of Bargraphs/////////////////////
-                BarOffset=50;
-                BarStart=80;
-                BarHeight=40;
-                BarStart1=180;
-                BarStart2=280;
-
-                bHeightStart=BarStart;
-                bHeightEnd=BarStart-BarHeight;
-
-                bHeightStart1=BarStart1;
-                bHeightEnd1=BarStart1-BarHeight;
-
-                bHeightStart2=BarStart2;
-                bHeightEnd2=BarStart2-BarHeight;
-
-                bWidthStart= 0+BarOffset;
-                bWidthEnd= wbars- (2*BarOffset);
-
-                //Barcode Graph Tree
-                var aExtent = d3.extent(songData, function (d){return d.speechiness;});
-                var aScale = d3.scaleLinear().domain([0,1]).range([bWidthStart, bWidthEnd]);
-                barcodeGraphs.append("rect")
-                    .attr("x", bWidthStart)
-                    .attr("y", BarStart-BarHeight)
-                    .attr("width", bWidthEnd)
-                    .attr("height", (BarHeight))
-                    .attr("class", "rectBox")
-                    .attr("Stroke","white")
-                    .attr("stroke-width", "1")
-                    .style("opacity", 1)
-                    .style("fill", "transparent");
-                barcodeGraphs.append("text")
-                    .attr("x", bWidthStart)
-                    .attr("y", BarStart-BarHeight-5)
-                    .style("font-size", 16)
-                    .text("Speechiness")
-                    .style("fill", "white")
-                    .style("opacity", .65);
-                barcodeGraphs.append("text")
-                    .attr("x", bWidthStart)
-                    .attr("y", BarStart+10)
-                    .style("font-size", 12)
-                    .text(aExtent[0].toFixed(3))
-                    .style("fill", "white")
-                    .style("opacity", .65);
-                barcodeGraphs.append("text")
-                    .attr("x", wbars-BarOffset)
-                    .attr("y", BarStart+10)
-                    .style("font-size", 12)
-                    .text(aExtent[1].toFixed(3))
-                    .style("fill", "white")
-                    .style("opacity", .65);
-                songData.forEach(function(d){
-                    barcodeGraphs.append("line")
-                        .attr("x1", bWidthStart+(aScale(d.speechiness)))
-                        .attr("y1", bHeightStart)
-                        .attr("x2", bWidthStart+(aScale(d.speechiness)))
-                        .attr("y2", bHeightEnd)
-                        .attr("stroke", "white")
-                        .attr("stroke-width", "1")
-                        .style("opacity", .45);
-                });
-
-                //Barcode Graph Two
-                var bExtent = d3.extent(songData, function (d){return d.energy;});
-                var bScale = d3.scaleLinear()
-                .domain([0,1])
-                .range([bWidthStart, bWidthEnd]);
-
-                barcodeGraphs.append("rect")
-                    .attr("x", bWidthStart)
-                    .attr("y", BarStart1-BarHeight)
-                    .attr("width", bWidthEnd)
-                    .attr("height", (BarHeight))
-                    .attr("class", "rectBox")
-                    .attr("Stroke","white")
-                    .attr("stroke-width", "1")
-                    .style("opacity", 1)
-                    .style("fill", "transparent");
-                barcodeGraphs.append("text")
-                    .attr("x", bWidthStart)
-                    .attr("y", BarStart1-BarHeight-5)
-                    .style("font-size", 16)
-                    .text("Energy")
-                    .style("fill", "white")
-                    .style("opacity", .65);
-                barcodeGraphs.append("text")
-                    .attr("x", bWidthStart)
-                    .attr("y", BarStart1+10)
-                    .style("font-size", 12)
-                    .text(bExtent[0].toFixed(3))
-                    .style("fill", "white")
-                    .style("opacity", .65);
-                barcodeGraphs.append("text")
-                    .attr("x", wbars-BarOffset)
-                    .attr("y", BarStart1+10)
-                    .style("font-size", 12)
-                    .text(bExtent[1].toFixed(3))
-                    .style("fill", "white")
-                    .style("opacity", .65);
-                songData.forEach(function(d){
-                    barcodeGraphs.append("line")
-                        .attr("x1", bWidthStart+(bScale(d.energy)))
-                        .attr("y1", bHeightStart1)
-                        .attr("x2", bWidthStart+(bScale(d.energy)))
-                        .attr("y2", bHeightEnd1)
-                        .attr("stroke", "white")
-                        .attr("stroke-width", "1")
-                        .style("opacity", .45);
-                });
-
-
-                //Barcode Graph Three
-                var cExtent = d3.extent(songData, function (d){return d.loudness;});
-                var cScale = d3.scaleLinear()
-                .domain(cExtent)
-                .range([bWidthStart, bWidthEnd]);
-
-                barcodeGraphs.append("rect")
-                    .attr("x", bWidthStart)
-                    .attr("y", BarStart2-BarHeight)
-                    .attr("width", bWidthEnd)
-                    .attr("height", (BarHeight))
-                    .attr("class", "rectBox")
-                    .attr("Stroke","white")
-                    .attr("stroke-width", "1")
-                    .style("opacity", 1)
-                    .style("fill", "transparent");
-                barcodeGraphs.append("text")
-                    .attr("x", bWidthStart)
-                    .attr("y", BarStart2-BarHeight-5)
-                    .style("font-size", 16)
-                    .text("Loudness")
-                    .style("fill", "white")
-                    .style("opacity", .65);
-                barcodeGraphs.append("text")
-                    .attr("x", bWidthStart)
-                    .attr("y", BarStart2+10)
-                    .style("font-size", 12)
-                    .text(cExtent[0].toFixed(3))
-                    .style("fill", "white")
-                    .style("opacity", .65);
-                barcodeGraphs.append("text")
-                    .attr("x", wbars-BarOffset)
-                    .attr("y", BarStart2+10)
-                    .style("font-size", 12)
-                    .text(cExtent[1].toFixed(3))
-                    .style("fill", "white")
-                    .style("opacity", .65);
-                songData.forEach(function(d){
-                    barcodeGraphs.append("line")
-                        .attr("x1", bWidthStart+(cScale(d.loudness)))
-                        .attr("y1", bHeightStart2)
-                        .attr("x2", bWidthStart+(cScale(d.loudness)))
-                        .attr("y2", bHeightEnd2)
-                        .attr("stroke", "white")
-                        .attr("stroke-width", "1")
-                        .style("opacity", .45);
-                });
                 
-                function buildBarGraph(bHeightStart, attribute) {
-                    BarOffset=50;
-                    BarStart=80;
-                    BarHeight=40;
+                function buildBarcodeGraph(attribute, attributeDescription, highlightName) {
+                    var BarOffset=50;
+                    var BarStart=80;
+                    var BarHeight=80;
+                    var LabelOffset=20;
 
-                    bHeightEnd = BarStart - BarHeight;
+                    var bHeightStart=BarStart;
+                    var bHeightEnd=BarStart-BarHeight;
 
-                    bWidthStart= 0+BarOffset;
-                    bWidthEnd= wbars- (2*BarOffset);
+                    var bWidthStart= 0+BarOffset;
+                    var bWidthEnd= wbars- (2*BarOffset);
+                    
+                    var barcodeName = "#" + attribute + "Barcode";
+                    var appendToGraph = d3.select(barcodeName)
+                        .attr("height", hbars)
+                        .attr("width", wbars);
                     
                     var cExtent = d3.extent(songData, function (d){return d[attribute];});
                     var cScale = d3.scaleLinear().domain(cExtent).range([bWidthStart, bWidthEnd]);
+                    
+                    var barOpacity = 0.8;
 
-                    barcodeGraphs.append("rect")
+                    appendToGraph.append("text")
                         .attr("x", bWidthStart)
-                        .attr("y", BarStart2-BarHeight)
-                        .attr("width", bWidthEnd)
-                        .attr("height", (BarHeight))
-                        .attr("class", "rectBox")
-                        .attr("Stroke","white")
-                        .attr("stroke-width", "1")
-                        .style("opacity", 1)
-                        .style("fill", "transparent");
-                    barcodeGraphs.append("text")
-                        .attr("x", bWidthStart)
-                        .attr("y", BarStart2-BarHeight-5)
-                        .style("font-size", 16)
-                        .text("Loudness")
+                        .attr("y", 0)
+                        .style("font-size", 48)
+                        .text(attribute)
+                        .attr("alignment-baseline", "before-edge")
+                        .style("fill", "#1dd069")
+                        .style("opacity", 1);
+                    appendToGraph.append("text")
+                        .attr("x", bWidthEnd)
+                        .attr("y", 20)
+                        .style("font-size", 20)
+                        .text(attributeDescription)
+                        .attr("alignment-baseline", "before-edge")
+                        .attr("text-anchor", "end")
                         .style("fill", "white")
-                        .style("opacity", .65);
-                    barcodeGraphs.append("text")
+                        .style("opacity", 1);
+                    appendToGraph.append("text")
                         .attr("x", bWidthStart)
-                        .attr("y", BarStart2+10)
+                        .attr("y", 2*BarHeight + LabelOffset)
                         .style("font-size", 12)
                         .text(cExtent[0].toFixed(3))
                         .style("fill", "white")
-                        .style("opacity", .65);
-                    barcodeGraphs.append("text")
+                        .style("opacity", barOpacity);
+                    appendToGraph.append("text")
                         .attr("x", wbars-BarOffset)
-                        .attr("y", BarStart2+10)
+                        .attr("y", 2*BarHeight + LabelOffset)
                         .style("font-size", 12)
                         .text(cExtent[1].toFixed(3))
                         .style("fill", "white")
-                        .style("opacity", .65);
+                        .style("opacity", barOpacity);
                     songData.forEach(function(d){
-                        barcodeGraphs.append("line")
+                        var highlightBarColor = "white";
+                        var highlightBarWidth = 2;
+                        var highlightBarOffset = 0;
+                        if (d.name == highlightName) {
+                            highlightBarColor = "#1dd069"
+                            highlightBarWidth = 5;
+                            highlightBarOffset = 20;
+                        }
+                        
+                        appendToGraph.append("line")
                             .attr("x1", bWidthStart+(cScale(d[attribute])))
-                            .attr("y1", bHeightStart2)
+                            .attr("y1", BarHeight - highlightBarOffset)
                             .attr("x2", bWidthStart+(cScale(d[attribute])))
-                            .attr("y2", bHeightEnd2)
-                            .attr("stroke", "white")
-                            .attr("stroke-width", "1")
-                            .style("opacity", .45);
+                            .attr("y2", 2*BarHeight + highlightBarOffset)
+                            .attr("stroke", highlightBarColor)
+                            .attr("stroke-width", highlightBarWidth)
+                            .style("opacity", barOpacity);
                     });
-
+                    
                 }
-
+                
+                var attribute_descriptions = ["average loudness of a track in decibels (dB)",
+                                             "measures perceived intensity and activity",
+                                             "measures musical positiveness conveyed by a track",
+                                             "detects the presence of spoken words in a track",
+                                             "estimated average tempo of a track in beats per minute (BPM)"];
+                
+                for (i = 0; i < attributes.length; i++) {
+                    buildBarcodeGraph(attributes[i], attribute_descriptions[i], checkSongs[i]);
+                } 
+                
+                //Build custom information for each graph
+                var loudnessBarcode = d3.select("#loudnessBarcode");
+                loudnessBarcode.append("text")
+                    .attr("x", 20)
+                    .attr("y", 20)
+                    .style("font-size", 20)
+                    .text("R")
+                    .attr("alignment-baseline", "before-edge")
+                    .attr("text-anchor", "end")
+                    .style("fill", "white")
+                    .style("opacity", 1);
+                
 
                 //Spotify Track Data
                 var track_height = 750;
@@ -775,7 +640,6 @@
                         .text(songData[song_number[i]].artists);
 
                     for (var j = 0; j < 5; j++) {
-                        attributes = ["loudness", "energy", "valence", "speechiness", "tempo"];
                         
                         if (j == i) {
                             boxColor = '#1dd069';
