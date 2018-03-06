@@ -114,29 +114,100 @@
             <br>
             <br>
             <br>
+            <br>
             <svg id="energyBarcode" height="10" width="10"></svg>
             <br>
                 <span style="color: #1dd069">Energy</span> is more evenly distributed.
             <br>
             <br>
-                That said, <span style="color: #1dd069">Just Hold On</span> by <span style="color: #1dd069">Steve Aoki</span> is noticeably more energetic than the next closest song.
+                That said, <span style="color: #1dd069">Just Hold On</span> by <span style="color: #1dd069">Steve Aoki</span> is noticeably more energetic than the next closest song,
             <br>
-                (The next most energetic song is <span style="color: #1dd069">Galway Girl</span> by <span style="color: #1dd069">Ed Sheeran</span>.)
+                <span style="color: #1dd069">Galway Girl</span> by <span style="color: #1dd069">Ed Sheeran</span>.
+            <br>
             <br>
             <br>
             <br>
             <br>
             <svg id="valenceBarcode" height="10" width="10"></svg>
             <br>
+                <span style="color: #1dd069">Valence</span> is also evenly distributed.
+            <br>
+                The mean is almost exactly halfway between happy and sad.
+            <br>
+            <br>
+                <span style="color: #1dd069">Your Song</span> by <span style="color: #1dd069">Rita Ora</span> is almost as happy as a song can possibly be.
+            <br>
+                (At least by Spotify's metrics.)
+            <br>
+            <br>
             <br>
             <br>
             <br>
             <svg id="speechinessBarcode" height="10" width="10"></svg>
             <br>
+                According to Spotify's definition of <span style="color: #1dd069">speechiness</span>,
+            <br>
+                values above <span style="color: #1dd069">0.33</span> indicate both music and speech, either in sections or layered,
+            <br>
+                while values below <span style="color: #1dd069">0.33</span> represent non-speech-like tracks.
+            <br>
+                (No track had above a <span style="color: #1dd069">0.66</span>, which indicates an entirely spoken-word track).
+            <br>
+            <br>
+                <span style="color: #1dd069">Mask Off</span> by <span style="color: #1dd069">Future</span> is one of the few vocal-heavy rap tracks
+            <br>
+                to make it into the Top 100.
+            <br>
+            <br>
             <br>
             <br>
             <br>
             <svg id="tempoBarcode" height="10" width="10"></svg>
+            <br>
+                Tracks are evenly spaced in the <span style="color: #1dd069">low 100 BPM</span> region.
+            <br>
+                There are <span style="color: #1dd069">fewer tracks with higher tempos</span> in the Top 100.
+            <br>
+            <br>
+                <span style="color: #1dd069">Bank Account</span> by <span style="color: #1dd069">21 Savage</span> tied with <span style="color: #1dd069">iSpy (feat. Lil Yachty)</span> by <span style="color: #1dd069">KYLE</span>
+            <br>
+                for the song with the slowest tempo.
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+                Now <span style="color: #1dd069">scroll back up</span> to the main visualization.
+            <br>
+                Notice how each (outlier) example for these five factors <span style="color: #1dd069">lies towards the edges</span> of the plot?
+            <br>
+            <br>
+                This means that our formula correctly recognizes the factors that distinguish outliers,
+            <br>
+                and conversely what factors make songs (more) mainstream.
+            <br>
+            <br>
+                <span style="color: #1dd069">Loudness</span>,
+                <span style="color: #1dd069">energy</span>,
+                <span style="color: #1dd069">valence</span>,
+                <span style="color: #1dd069">speechiness</span>, and
+                <span style="color: #1dd069">tempo</span>
+            <br>
+                make songs distinctive and differentiate them from each other,
+            <br>
+                even when considering only the Top 100 songs on <span style="color: #1dd069">Spotify</span>.
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
             <br>
             <br>
             <br>
@@ -301,6 +372,7 @@
                 */
                 
                 var checkSongs = ["Location", "Just Hold On", "Your Song", "Mask Off", "Bank Account"];
+                var factorsPCA = [-0.580071581, -0.498072362, -0.445338516, 0.326008064, 0.221122827];
 
                 function checkColor (data) {
                     if (checkSongs.indexOf(data) >= 0){
@@ -497,7 +569,7 @@
                 var bWidthStart= 0.75*BarOffset;
                 var bWidthEnd= wbars - (2*BarOffset);
                 
-                function buildBarcodeGraph(attribute, attributeDescription, highlightName) {                    
+                function buildBarcodeGraph(attribute, attributeDescription, highlightName, attributeNumber) {                    
                     var barcodeName = "#" + attribute + "Barcode";
                     var appendToGraph = d3.select(barcodeName)
                         .attr("height", hbars)
@@ -515,6 +587,16 @@
                         .text(attribute)
                         .attr("font-family", "Roboto Slab")
                         .attr("alignment-baseline", "before-edge")
+                        .style("fill", "#1dd069")
+                        .style("opacity", 1);
+                    appendToGraph.append("text")
+                        .attr("x", bWidthEnd + 8*LabelOffset)
+                        .attr("y", 1*LabelOffset)
+                        .style("font-size", 24)
+                        .text("coefficient=" + factorsPCA[i].toFixed(3))
+                        .attr("font-family", "Roboto Slab")
+                        .attr("alignment-baseline", "before-edge")
+                        .attr("text-anchor", "end")
                         .style("fill", "#1dd069")
                         .style("opacity", 1);
                     appendToGraph.append("text")
@@ -585,25 +667,33 @@
                     
                     attributeSum /= songData.length;
                     appendToGraph.append("text")
-                        .attr("x", wbars/2)
-                        .attr("y", 2*BarHeight + 3*LabelOffset)
+                        .attr("x", bWidthStart+(cScale(attributeSum)))
+                        .attr("y", 2*BarHeight + 4*LabelOffset)
                         .attr("text-anchor", "middle")
                         .attr("font-family", "Roboto")
                         .style("font-size", 16)
                         .style("fill", "white")
                         .style("opacity", 0.8)
                         .text("mean: " + attributeSum.toFixed(3));
-                    
+                    appendToGraph.append("line")
+                        .attr("x1", bWidthStart+(cScale(attributeSum)))
+                        .attr("y1", BarHeight - 20 + 2*LabelOffset)
+                        .attr("x2", bWidthStart+(cScale(attributeSum)))
+                        .attr("y2", 2*BarHeight + 20 + 2*LabelOffset)
+                        .attr("stroke", "white")
+                        .attr("stroke-width", 3)
+                        .style("opacity", 0.5);
+        
                 }
                 
                 var attribute_descriptions = ["average loudness of a track in decibels (dB), typically from -60 to 0 dB",
                                              "measures perceived intensity and activity, from 0 to 1",
-                                             "measures musical positiveness conveyed by a track, from 0 to 1",
+                                             "measures emotional positiveness conveyed by a track, from 0 to 1",
                                              "detects the presence of spoken words in a track, from 0 to 1",
                                              "estimated average tempo of a track in beats per minute (BPM)"];
                 
                 for (i = 0; i < attributes.length; i++) {
-                    buildBarcodeGraph(attributes[i], attribute_descriptions[i], checkSongs[i]);
+                    buildBarcodeGraph(attributes[i], attribute_descriptions[i], checkSongs[i], i);
                 } 
                 
                 //Build custom information for each graph
