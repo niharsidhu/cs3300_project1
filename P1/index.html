@@ -109,7 +109,7 @@
             <br>
                 There is a wide range of <span style="color: #1dd069">volume</span> among songs in the Top 100.
             <br>
-                Softer songs are, however, <span style="color: #1dd069">noticeably less represented</span>.
+                Softer songs such as <span style="color: #1dd069">Location</span> by <span style="color: #1dd069">Khalid</span>, however, <span style="color: #1dd069"> are noticeably less represented</span>.
             <br>
             <br>
             <br>
@@ -118,10 +118,10 @@
             <br>
                 <span style="color: #1dd069">Energy</span> is more evenly distributed.
             <br>
-                There are songs to unwind to, songs to turn up to, and songs for everything in between.
-            <br>
             <br>
                 That said, <span style="color: #1dd069">Just Hold On</span> by <span style="color: #1dd069">Steve Aoki</span> is noticeably more energetic than the next closest song.
+            <br>
+                (The next most energetic song is <span style="color: #1dd069">Galway Girl</span> by <span style="color: #1dd069">Ed Sheeran</span>.)
             <br>
             <br>
             <br>
@@ -322,8 +322,8 @@
                             .attr("r", 30)
                             .attr("fill", "transparent")
                             .attr("stroke", "#1dd069")
-                            .attr("stroke-width", "3")
-                            .style("opacity", .5);
+                            .attr("stroke-width", "4")
+                            .style("opacity", .7);
                     }
                     graph.append("svg:image")
                         .attr("x", rank(d.rank))
@@ -408,7 +408,7 @@
                 var marginBottom = 30;
 
                 var widthScores = 800;	//width of the actual graph
-                var heightScores = 300; //height of the actual graph
+                var heightScores = 250; //height of the actual graph
 
                 var svgScores = d3.select("#VerticalGraph")
                 .attr("width", widthScores + marginLeft + marginRight)
@@ -430,8 +430,7 @@
                         return ("translate(0,-20)")
                     };
                 };
-
-
+                
                 d3.csv("data_Scores.csv", function(data){
                     xAxisScore.domain(data.map(function(d) {return d.Feature; }));
                     minY = d3.min(data, function(d){return d.Value; });
@@ -541,7 +540,11 @@
                         .text(cExtent[1].toFixed(3))
                         .style("fill", "white")
                         .style("opacity", barOpacity);
+                    
+                    var attributeSum = 0;
                     songData.forEach(function(d){
+                        attributeSum += d[attribute];
+                        
                         var highlightBarColor = "white";
                         var highlightBarWidth = 2;
                         var highlightBarOffset = 0;
@@ -580,12 +583,23 @@
                             .style("opacity", barOpacity);
                     });
                     
+                    attributeSum /= songData.length;
+                    appendToGraph.append("text")
+                        .attr("x", wbars/2)
+                        .attr("y", 2*BarHeight + 3*LabelOffset)
+                        .attr("text-anchor", "middle")
+                        .attr("font-family", "Roboto")
+                        .style("font-size", 16)
+                        .style("fill", "white")
+                        .style("opacity", 0.8)
+                        .text("mean: " + attributeSum.toFixed(3));
+                    
                 }
                 
-                var attribute_descriptions = ["average loudness of a track in decibels (dB)",
-                                             "measures perceived intensity and activity",
-                                             "measures musical positiveness conveyed by a track",
-                                             "detects the presence of spoken words in a track",
+                var attribute_descriptions = ["average loudness of a track in decibels (dB), typically from -60 to 0 dB",
+                                             "measures perceived intensity and activity, from 0 to 1",
+                                             "measures musical positiveness conveyed by a track, from 0 to 1",
+                                             "detects the presence of spoken words in a track, from 0 to 1",
                                              "estimated average tempo of a track in beats per minute (BPM)"];
                 
                 for (i = 0; i < attributes.length; i++) {
