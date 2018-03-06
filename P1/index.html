@@ -28,7 +28,7 @@
 
             }
             body{
-                background: linear-gradient(#202020, #101010);
+                background: linear-gradient(#161616, #0d0d0d);
             }
             #rectBox{
 
@@ -101,33 +101,62 @@
                 <span style="color: #1dd069">tempo</span>.
             <br>
             <br>
-                Let's go into more detail for each of these factors.
+                Let's look at each of these factors in more detail.
             <br>
             <br>
             <br>
             <svg id="loudnessBarcode" height="10" width="10"></svg>
             <br>
+                There is a wide range of <span style="color: #1dd069">volume</span> among songs in the Top 100.
+            <br>
+                Softer songs are, however, <span style="color: #1dd069">noticeably less represented</span>.
+            <br>
+            <br>
+            <br>
             <br>
             <svg id="energyBarcode" height="10" width="10"></svg>
+            <br>
+                <span style="color: #1dd069">Energy</span> is more evenly distributed.
+            <br>
+                There are songs to unwind to, songs to turn up to, and songs for everything in between.
+            <br>
+            <br>
+                That said, <span style="color: #1dd069">Just Hold On</span> by <span style="color: #1dd069">Steve Aoki</span> is noticeably more energetic than the next closest song.
+            <br>
+            <br>
             <br>
             <br>
             <svg id="valenceBarcode" height="10" width="10"></svg>
             <br>
             <br>
+            <br>
+            <br>
             <svg id="speechinessBarcode" height="10" width="10"></svg>
+            <br>
+            <br>
             <br>
             <br>
             <svg id="tempoBarcode" height="10" width="10"></svg>
             <br>
             <br>
-            <span style="background: black">
-                Interested in listening to these tracks to hear these factors for yourself?
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+                Interested in listening to these tracks to hear this for yourself?
                 <br>
                Scan the song codes below the album art for each song to play them on <span style="color: #1dd069">Spotify</span>.
-            </span>
             <br>
             <br>
             <svg id="SpotifyTracks" height="10" width="10"></svg>
+            <br>
+            <br>
+                Data sourced from the <a href="https://developer.spotify.com/web-api/" style="color: #1dd069">Spotify Web API</a> via <a href="https://www.kaggle.com/nadintamer/top-tracks-of-2017/data" style="color: #1dd069">Kaggle</a>
+            <br>
+                Album art sourced from <a href="https://www.apple.com/music" style="color: #1dd069">Apple Music</a>
+            <br>
+                Spotify codes generated through <a href="https://www.spotifycodes.com/index.html#create" style="color: #1dd069">Spotify</a>
         </p>
 
         <script>
@@ -139,7 +168,7 @@
             var width= 1000;
             var height= 600;
 
-            var wbars=1000;
+            var wbars=1200;
             var hbars=300;
 
             var keystart=260;
@@ -415,9 +444,9 @@
                         .data(data)
                         .enter().append("line")
                         .attr("x1", function(d) {return xAxisScore(d.Feature); })
-                        .attr("y1", function(d) {return (heightScores/2);})			
+                        .attr("y1", function(d) {return 1*(heightScores/2);})			
                         .attr("x2", function(d) {return xAxisScore(d.Feature); })												
-                        .attr("y2", function(d) {return (yAxisScore(d.Value))/2; })
+                        .attr("y2", function(d) {return 1*(yAxisScore(d.Value))/2; })
                         .attr("stroke", "white")
                         .style("opacity", .65)
                         .attr("stroke-width", 1.5)
@@ -458,18 +487,18 @@
 
                 });
                 
-                function buildBarcodeGraph(attribute, attributeDescription, highlightName) {
-                    var BarOffset=50;
-                    var BarStart=80;
-                    var BarHeight=80;
-                    var LabelOffset=20;
+                var BarOffset=150;
+                var BarStart=80;
+                var BarHeight=80;
+                var LabelOffset=20;
 
-                    var bHeightStart=BarStart;
-                    var bHeightEnd=BarStart-BarHeight;
-
-                    var bWidthStart= 0+BarOffset;
-                    var bWidthEnd= wbars- (2*BarOffset);
-                    
+                var bHeightStart=BarStart;
+                var bHeightEnd=BarStart-BarHeight;
+                
+                var bWidthStart= 0.75*BarOffset;
+                var bWidthEnd= wbars - (2*BarOffset);
+                
+                function buildBarcodeGraph(attribute, attributeDescription, highlightName) {                    
                     var barcodeName = "#" + attribute + "Barcode";
                     var appendToGraph = d3.select(barcodeName)
                         .attr("height", hbars)
@@ -485,23 +514,24 @@
                         .attr("y", 0)
                         .style("font-size", 48)
                         .text(attribute)
+                        .attr("font-family", "Roboto Slab")
                         .attr("alignment-baseline", "before-edge")
                         .style("fill", "#1dd069")
                         .style("opacity", 1);
                     appendToGraph.append("text")
-                        .attr("x", bWidthEnd)
-                        .attr("y", 20)
+                        .attr("x", bWidthStart)
+                        .attr("y", 60)
                         .style("font-size", 20)
                         .text(attributeDescription)
                         .attr("alignment-baseline", "before-edge")
-                        .attr("text-anchor", "end")
                         .style("fill", "white")
-                        .style("opacity", 1);
+                        .style("opacity", 0.8);
                     appendToGraph.append("text")
-                        .attr("x", bWidthStart)
+                        .attr("x", bWidthStart + 3*LabelOffset)
                         .attr("y", 2*BarHeight + LabelOffset)
                         .style("font-size", 12)
                         .text(cExtent[0].toFixed(3))
+                        .attr("text-anchor", "end")
                         .style("fill", "white")
                         .style("opacity", barOpacity);
                     appendToGraph.append("text")
@@ -519,13 +549,32 @@
                             highlightBarColor = "#1dd069"
                             highlightBarWidth = 5;
                             highlightBarOffset = 20;
+                            
+                            //Place song information
+                            appendToGraph.append("text")
+                                .attr("x", bWidthStart+(cScale(d[attribute])))
+                                .attr("y", 2*BarHeight - highlightBarOffset + 5.5*LabelOffset)
+                                .attr("text-anchor", "middle")
+                                .attr("font-family", "Roboto Slab")
+                                .style("font-size", 24)
+                                .style("fill", "1dd069")
+                                .text(d.name);
+                            appendToGraph.append("text")
+                                .attr("x", bWidthStart+(cScale(d[attribute])))
+                                .attr("y", 2*BarHeight - highlightBarOffset + 6.5*LabelOffset)
+                                .attr("text-anchor", "middle")
+                                .attr("font-family", "Roboto")
+                                .style("font-size", 20)
+                                .style("fill", "1dd069")
+                                .text(d.artists)
+                                .style("opacity", 0.8);
                         }
                         
                         appendToGraph.append("line")
                             .attr("x1", bWidthStart+(cScale(d[attribute])))
-                            .attr("y1", BarHeight - highlightBarOffset)
+                            .attr("y1", BarHeight - highlightBarOffset + 2*LabelOffset)
                             .attr("x2", bWidthStart+(cScale(d[attribute])))
-                            .attr("y2", 2*BarHeight + highlightBarOffset)
+                            .attr("y2", 2*BarHeight + highlightBarOffset + 2*LabelOffset)
                             .attr("stroke", highlightBarColor)
                             .attr("stroke-width", highlightBarWidth)
                             .style("opacity", barOpacity);
@@ -546,14 +595,103 @@
                 //Build custom information for each graph
                 var loudnessBarcode = d3.select("#loudnessBarcode");
                 loudnessBarcode.append("text")
-                    .attr("x", 20)
-                    .attr("y", 20)
-                    .style("font-size", 20)
-                    .text("R")
-                    .attr("alignment-baseline", "before-edge")
+                    .attr("x", bWidthStart + 3*LabelOffset)
+                    .attr("y", 2*BarHeight + 2*LabelOffset)
+                    .style("font-size", 24)
                     .attr("text-anchor", "end")
+                    .attr("font-family", "Roboto")
+                    .text("softer")
                     .style("fill", "white")
-                    .style("opacity", 1);
+                    .style("opacity", 0.8);
+                loudnessBarcode.append("text")
+                    .attr("x", wbars-BarOffset)
+                    .attr("y", 2*BarHeight + 2*LabelOffset)
+                    .style("font-size", 24)
+                    .attr("text-anchor", "start")
+                    .attr("font-family", "Roboto")
+                    .text("louder")
+                    .style("fill", "white")
+                    .style("opacity", 0.8);
+                
+                var energyBarcode = d3.select("#energyBarcode");
+                energyBarcode.append("text")
+                    .attr("x", bWidthStart + 3*LabelOffset)
+                    .attr("y", 2*BarHeight + 2*LabelOffset)
+                    .style("font-size", 24)
+                    .attr("text-anchor", "end")
+                    .attr("font-family", "Roboto")
+                    .text("relaxed")
+                    .style("fill", "white")
+                    .style("opacity", 0.8);
+                energyBarcode.append("text")
+                    .attr("x", wbars-BarOffset)
+                    .attr("y", 2*BarHeight + 2*LabelOffset)
+                    .style("font-size", 24)
+                    .attr("text-anchor", "start")
+                    .attr("font-family", "Roboto")
+                    .text("lively")
+                    .style("fill", "white")
+                    .style("opacity", 0.8);
+                
+                var valenceBarcode = d3.select("#valenceBarcode");
+                valenceBarcode.append("text")
+                    .attr("x", bWidthStart + 3*LabelOffset)
+                    .attr("y", 2*BarHeight + 2*LabelOffset)
+                    .style("font-size", 24)
+                    .attr("text-anchor", "end")
+                    .attr("font-family", "Roboto")
+                    .text("sadder")
+                    .style("fill", "white")
+                    .style("opacity", 0.8);
+                valenceBarcode.append("text")
+                    .attr("x", wbars-BarOffset)
+                    .attr("y", 2*BarHeight + 2*LabelOffset)
+                    .style("font-size", 24)
+                    .attr("text-anchor", "start")
+                    .attr("font-family", "Roboto")
+                    .text("happier")
+                    .style("fill", "white")
+                    .style("opacity", 0.8);
+                
+                var speechinessBarcode = d3.select("#speechinessBarcode");
+                speechinessBarcode.append("text")
+                    .attr("x", bWidthStart + 3*LabelOffset)
+                    .attr("y", 2*BarHeight + 2*LabelOffset)
+                    .style("font-size", 24)
+                    .attr("text-anchor", "end")
+                    .attr("font-family", "Roboto")
+                    .text("instrumental")
+                    .style("fill", "white")
+                    .style("opacity", 0.8);
+                speechinessBarcode.append("text")
+                    .attr("x", wbars-BarOffset)
+                    .attr("y", 2*BarHeight + 2*LabelOffset)
+                    .style("font-size", 24)
+                    .attr("text-anchor", "start")
+                    .attr("font-family", "Roboto")
+                    .text("speechlike")
+                    .style("fill", "white")
+                    .style("opacity", 0.8);
+                
+                var tempoBarcode = d3.select("#tempoBarcode");
+                tempoBarcode.append("text")
+                    .attr("x", bWidthStart + 3*LabelOffset)
+                    .attr("y", 2*BarHeight + 2*LabelOffset)
+                    .style("font-size", 24)
+                    .attr("text-anchor", "end")
+                    .attr("font-family", "Roboto")
+                    .text("slower")
+                    .style("fill", "white")
+                    .style("opacity", 0.8);
+                tempoBarcode.append("text")
+                    .attr("x", wbars-BarOffset)
+                    .attr("y", 2*BarHeight + 2*LabelOffset)
+                    .style("font-size", 24)
+                    .attr("text-anchor", "start")
+                    .attr("font-family", "Roboto")
+                    .text("faster")
+                    .style("fill", "white")
+                    .style("opacity", 0.8);
                 
 
                 //Spotify Track Data
